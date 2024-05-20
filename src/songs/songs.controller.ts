@@ -9,14 +9,15 @@ import {
     Param,
     ParseIntPipe,
     Body,
-    Inject
+    Inject,
+    Scope
   } from '@nestjs/common';
   import { SongsService } from './songs.service';
   import { CreateSongDTO } from './dto/create-song-dto';
   import { Connection } from 'src/common/constant/connection';
 
   
-@Controller('songs')
+@Controller({ path: 'songs', scope: Scope.REQUEST })
 export class SongsController {
   constructor(
     private songsService: SongsService,
