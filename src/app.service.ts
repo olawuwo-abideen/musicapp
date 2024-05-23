@@ -3,14 +3,7 @@ import { DevConfigService } from './common/providers/DevConfigService';
 
 @Injectable()
 export class AppService {
-  constructor(
-    private devConfigService: DevConfigService,
-    @Inject('CONFIG')
-    private config: { port: string },
-  ) {}
   getHello(): string {
-    return `Musicapp API ${this.devConfigService.getDBHOST()} PORT = ${
-      this.config.port
-    }`;
+    return 'Hello I am learning Nest.js Fundamentals';
   }
 }

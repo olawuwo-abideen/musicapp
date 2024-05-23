@@ -2,7 +2,7 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { LoggerMiddleware } from './common/middleware/logger.middleware.';
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { SongsController } from './songs/songs.controller';
 import { SongsModule } from './songs/songs.module';
 import { Song } from './songs/song.entity';
@@ -12,7 +12,7 @@ import { Song } from './songs/song.entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      database: 'spotify-clone',
+      database: 'musicapp',
       host: 'localhost',
       port: 5432,
       username: 'postgres',
