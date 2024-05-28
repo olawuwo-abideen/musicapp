@@ -20,7 +20,7 @@ import { SongsService } from './songs.service';
 import { CreateSongDTO } from './dto/create-song-dto';
 import { Song } from './song.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
-import { UpdateSongDto } from './dto/update-song-dto';
+import { UpdateSongDTO } from './dto/update-song-dto';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { ArtistJwtGuard } from 'src/auth/artists-jwt-guard';
 import { ApiTags } from '@nestjs/swagger';
@@ -67,7 +67,7 @@ export class SongsController {
   @Put(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateSongDTO: UpdateSongDto,
+    @Body() updateSongDTO: UpdateSongDTO,
   ): Promise<UpdateResult> {
     return this.songsService.update(id, updateSongDTO);
   }

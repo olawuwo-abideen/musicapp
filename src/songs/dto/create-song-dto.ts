@@ -11,12 +11,12 @@ import {
 export class CreateSongDTO {
   @IsString()
   @IsNotEmpty()
-  readonly title;
+  readonly title : string;
 
   @IsNotEmpty()
   @IsArray()
   @IsNumber({}, { each: true })
-  readonly artists;
+  readonly artists : string;
 
   @IsNotEmpty()
   @IsDateString()
