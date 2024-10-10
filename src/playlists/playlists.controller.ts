@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { Playlist } from './playlist.entity';
+import { Playlist } from './entity/playlist.entity';
 import { CreatePlayListDto } from './dto/create-playlist.dto';
 import { PlayListsService } from './playlists.service';
 import { ApiTags } from '@nestjs/swagger';

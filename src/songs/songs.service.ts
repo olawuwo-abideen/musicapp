@@ -1,4 +1,4 @@
-import {Injectable } from '@nestjs/common';
+import { ConsoleLogger, Injectable } from '@nestjs/common';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import {
   paginate,
@@ -6,11 +6,11 @@ import {
   IPaginationOptions,
 } from 'nestjs-typeorm-paginate';
 
-import { Song } from './song.entity';
+import { Song } from './entity/song.entity';
 import { CreateSongDTO } from './dto/create-song-dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UpdateSongDTO } from './dto/update-song-dto';
-import { Artist } from 'src/artists/artist.entity';
+import { UpdateSongDto } from './dto/update-song-dto';
+import { Artist } from 'src/artists/entity/artists.entity';
 
 @Injectable()
 export class SongsService {
@@ -32,7 +32,7 @@ export class SongsService {
     console.log(songDTO.artists);
 
     // find all the artits on the based on ids
-    const artists = await this.artistsRepository.findBy(songDTO.artists);
+    const artists = await this.artistsRepository.findByIds(songDTO.artists);
     console.log(artists);
     //set the relation with artist and songs
     song.artists = artists;
@@ -52,7 +52,7 @@ export class SongsService {
     return this.songsRepository.delete(id);
   }
 
-  update(id: number, recordToUpdate: UpdateSongDTO): Promise<UpdateResult> {
+  update(id: number, recordToUpdate: UpdateSongDto): Promise<UpdateResult> {
     return this.songsRepository.update(id, recordToUpdate);
   }
 

@@ -1,9 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Playlist } from './playlist.entity';
-import { Song } from 'src/songs/song.entity';
+
+import { Playlist } from './entity/playlist.entity';
+import { Song } from 'src/songs/entity/song.entity';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { User } from 'src/users/user.entity';
+import { User } from 'src/users/entity/user.entity';
 import { CreatePlayListDto } from './dto/create-playlist.dto';
 
 @Injectable()
