@@ -10,7 +10,7 @@ import {
   export class UpdateSongDto {
     @IsString()
     @IsOptional()
-    readonly title;
+    readonly title: string;
   
     @IsOptional()
     @IsArray()

@@ -5,7 +5,6 @@ import {
   Pagination,
   IPaginationOptions,
 } from 'nestjs-typeorm-paginate';
-
 import { Song } from './entity/song.entity';
 import { CreateSongDTO } from './dto/create-song-dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -32,7 +31,7 @@ export class SongsService {
     console.log(songDTO.artists);
 
     // find all the artits on the based on ids
-    const artists = await this.artistsRepository.findByIds(songDTO.artists);
+    const artists = await this.artistsRepository.findBy(songDTO.artists);
     console.log(artists);
     //set the relation with artist and songs
     song.artists = artists;

@@ -11,7 +11,7 @@ import {
   export class CreateSongDTO {
     @IsString()
     @IsNotEmpty()
-    readonly title;
+    readonly title : string;
   
     @IsNotEmpty()
     @IsArray()

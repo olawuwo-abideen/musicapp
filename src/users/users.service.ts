@@ -11,7 +11,7 @@ import { v4 as uuid4 } from 'uuid';
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>, // 1.
+    private userRepository: Repository<User>, 
   ) {}
 
   async create(userDTO: CreateUserDTO): Promise<User> {
@@ -21,8 +21,8 @@ export class UsersService {
     user.email = userDTO.email;
     user.apiKey = uuid4();
 
-    const salt = await bcrypt.genSalt(); // 2.
-    user.password = await bcrypt.hash(userDTO.password, salt); // 3.
+    const salt = await bcrypt.genSalt(); 
+    user.password = await bcrypt.hash(userDTO.password, salt); 
 
     const savedUser = await this.userRepository.save(user);
     delete savedUser.password;

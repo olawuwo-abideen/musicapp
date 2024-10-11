@@ -6,7 +6,6 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { ArtistsService } from 'src/artists/artists.service';
 import { Enable2FAType, PayloadType } from './types';
-
 import * as speakeasy from 'speakeasy';
 import { UpdateResult } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
@@ -25,7 +24,7 @@ export class AuthService {
   ): Promise<
     { accessToken: string } | { validate2FA: string; message: string }
   > {
-    const user = await this.userService.findOne(loginDTO); // 1.
+    const user = await this.userService.findOne(loginDTO); 
 
     const passwordMatched = await bcrypt.compare(
       loginDTO.password,
@@ -35,16 +34,12 @@ export class AuthService {
     if (passwordMatched) {
       delete user.password;
       const payload: PayloadType = { email: user.email, userId: user.id };
-      const artist = await this.artistsService.findArtist(user.id); // 2
+      const artist = await this.artistsService.findArtist(user.id); 
       if (artist) {
         payload.artistId = artist.id;
       }
       if (user.enable2FA && user.twoFASecret) {
-        //1.
-        // sends the validateToken request link
-        // else otherwise sends the json web token in the response
         return {
-          //2.
           validate2FA: 'http://localhost:3000/auth/validate-2fa',
           message:
             'Please sends the one time password/token from your Google Authenticator App',
@@ -54,20 +49,19 @@ export class AuthService {
         accessToken: this.jwtService.sign(payload),
       };
     } else {
-      throw new UnauthorizedException('Password does not match'); // 5.
+      throw new UnauthorizedException('Password does not match'); 
     }
   }
   async enable2FA(userId: number): Promise<Enable2FAType> {
-    const user = await this.userService.findById(userId); //1
+    const user = await this.userService.findById(userId); 
     if (user.enable2FA) {
-      //2
       return { secret: user.twoFASecret };
     }
-    const secret = speakeasy.generateSecret(); //3
+    const secret = speakeasy.generateSecret(); 
     console.log(secret);
-    user.twoFASecret = secret.base32; //4
-    await this.userService.updateSecretKey(user.id, user.twoFASecret); //5
-    return { secret: user.twoFASecret }; //6
+    user.twoFASecret = secret.base32; 
+    await this.userService.updateSecretKey(user.id, user.twoFASecret); 
+    return { secret: user.twoFASecret };
   }
 
   async validate2FAToken(
@@ -75,19 +69,12 @@ export class AuthService {
     token: string,
   ): Promise<{ verified: boolean }> {
     try {
-      // find the user on the based on id
       const user = await this.userService.findById(userId);
-
-      // extract his 2FA secret
-
-      // verify the secret with token by calling the speakeasy verify method
       const verified = speakeasy.totp.verify({
         secret: user.twoFASecret,
         token: token,
         encoding: 'base32',
       });
-
-      // if validated then sends the json web token in the response
       if (verified) {
         return { verified: true };
       } else {

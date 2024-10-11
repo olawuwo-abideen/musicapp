@@ -17,8 +17,8 @@ async function bootstrap() {
   // await seedService.seed();
 
   const config = new DocumentBuilder() //1
-    .setTitle('Spotify Clone')
-    .setDescription('The Spotify Clone Api documentation')
+    .setTitle('Musicapp')
+    .setDescription('A Musicapp Api documentation')
     .setVersion('1.0')
     .addBearerAuth(
       // Enable Bearer Auth here
@@ -34,8 +34,8 @@ async function bootstrap() {
     )
     .build();
 
-  const document = SwaggerModule.createDocument(app, config); //2
-  SwaggerModule.setup('api', app, document); //3
+  const document = SwaggerModule.createDocument(app, config); 
+  SwaggerModule.setup('api', app, document);
 
   const configService = app.get(ConfigService);
   await app.listen(configService.get<number>('port'));

@@ -25,7 +25,7 @@ export class PlayListsService {
     playList.name = playListDTO.name;
 
     // songs will be the array of ids that we are getting from the DTO object
-    const songs = await this.songsRepo.findByIds(playListDTO.songs);
+    const songs = await this.songsRepo.findBy(playListDTO.songs);
     // set the relation for the songs with playlist entity
     playList.songs = songs;
 

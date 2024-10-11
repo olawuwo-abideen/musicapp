@@ -14,7 +14,7 @@ export class AppController {
 
   @Get('profile')
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth') //1
+  @ApiBearerAuth('JWT-auth') 
   getProfile(
     @Req()
     request,
