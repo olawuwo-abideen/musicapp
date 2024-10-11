@@ -1,73 +1,76 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+A Music app 
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Installation
 
-## Description
+- clone the repository
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Installation
+`git clone git@github.com:olawuwo-abideen/musicapp.git`
 
-```bash
-$ npm install
-```
 
-## Running the app
+- navigate to the folder
 
-```bash
-# development
-$ npm run start
 
-# watch mode
-$ npm run start:dev
+`cd musicapp-main.git`
 
-# production mode
-$ npm run start:prod
-```
+To run the app in development mode
 
-## Test
+Open a terminal and enter the following command to install all the  modules needed to run the app:
 
-```bash
-# unit tests
-$ npm run test
+`npm install`
 
-# e2e tests
-$ npm run test:e2e
 
-# test coverage
-$ npm run test:cov
-```
+Create a `.env` file with
 
-## Support
+`PORT=3000`
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+`SECRET=secret`
 
-## Stay in touch
+`DB_HOST=localhost`
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+`DB_PORT=5432`
 
-## License
+`USERNAME=postgres`
 
-Nest is [MIT licensed](LICENSE).
+`PASSWORD=root`
+
+`DB_NAME=musicapp`
+
+`NODE_ENV=development`
+
+
+
+Enter the following `npm start` command to Command Line Interface to Start the app
+
+This will start the app and set it up to listen for incoming connections on port 3000. 
+
+Use Postman to test the endpoint
+
+API Endpoints
+
+The following API endpoints are available:
+
+- BaseUrl https://localhost:3000/
+
+
+**Authentication**
+
+- **POST /auth/signup**: User login.
+- **POST /auth/login**: User logout.
+- **GET /auth/enable-2fa**: Enable Two Factor Verification.
+- **POST /auth/validate-2fa**: Validate Two Factor Verification.
+- **GET /auth/disable-2fa**: Disable Two Factor Verification.
+- **GET /auth/profile**: Get user profile.
+
+**Playlists**
+
+- **POST /playlists**: Create playlists.
+
+**Songs**
+
+- **POST /songs**: Create a songs.
+- **GET /songs**: Get all songs.
+- **GET /songs/:id**: Get a song.
+- **PUT /songs/:id**: Update a song.
+- **DELETE /songs/:id**: Remove a song.
