@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { SeedService } from './seed/seed.service';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
@@ -10,18 +9,12 @@ declare const module: any;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
-  /**
-   * You can enable the seeding here
-   */
-  // const seedService = app.get(SeedService);
-  // await seedService.seed();
 
   const config = new DocumentBuilder() //1
     .setTitle('Musicapp')
     .setDescription('A Musicapp Api documentation')
     .setVersion('1.0')
     .addBearerAuth(
-      // Enable Bearer Auth here
       {
         type: 'http',
         scheme: 'bearer',
@@ -30,7 +23,7 @@ async function bootstrap() {
         description: 'Enter JWT token',
         in: 'header',
       },
-      'JWT-auth', // We will use this Bearer Auth with JWT-auth name on the controller function
+      'JWT-auth',
     )
     .build();
 

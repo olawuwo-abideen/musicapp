@@ -31,7 +31,7 @@ Create a `.env` file with
 
 `DB_PORT=5432`
 
-`USERNAME=postgres`
+`DB_USERNAME=postgres`
 
 `PASSWORD=root`
 

@@ -39,7 +39,7 @@ export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
   host: process.env.DB_HOST,
   port: parseInt(process.env.DB_PORT),
-  username: process.env.USERNAME,
+  username: process.env.DB_USERNAME,
   database: process.env.DB_NAME,
   password: process.env.PASSWORD,
   entities: ['dist/**/*.entity.js'], //1
