@@ -1,10 +1,10 @@
-import { Artist } from 'src/artists/entity/artists.entity';
-import { User } from 'src/users/entity/user.entity';
+import { Artist } from 'src/shared/entities/artists.entity';
+import { User } from 'src/shared/entities/user.entity';
 import { EntityManager } from 'typeorm';
 import { faker } from '@faker-js/faker';
 import { v4 as uuid4 } from 'uuid';
 import * as bcrypt from 'bcryptjs';
-import { Playlist } from 'src/playlists/entity/playlist.entity';
+import { Playlist } from 'src/shared/entities/playlist.entity';
 
 export const seedData = async (manager: EntityManager): Promise<void> => {
   //1

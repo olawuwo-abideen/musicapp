@@ -3,10 +3,10 @@ import {
   TypeOrmModuleAsyncOptions,
   TypeOrmModuleOptions,
 } from '@nestjs/typeorm';
-import { Artist } from 'src/artists/entity/artists.entity';
-import { Playlist } from 'src/playlists/entity/playlist.entity';
-import { Song } from 'src/songs/entity/song.entity';
-import { User } from 'src/users/entity/user.entity';
+import { Artist } from 'src/shared/entities/artists.entity';
+import { Playlist } from 'src/shared/entities/playlist.entity';
+import { Song } from 'src/shared/entities/song.entity';
+import { User } from 'src/shared/entities/user.entity';
 import { DataSource, DataSourceOptions } from 'typeorm';
 
 //LOAD Environment Variables
