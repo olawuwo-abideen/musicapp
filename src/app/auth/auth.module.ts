@@ -1,30 +1,39 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { UsersModule } from 'src/app/users/users.module';
+import { AuthService } from './auth.service';
+import { UsersService } from '../users/users.service';
+import { UsersModule } from '../users/users.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from './strategy/jwt-strategy';
-import { ArtistsModule } from 'src/app/artists/artists.module';
-import { ApiKeyStrategy } from './strategy/api-key-strategy';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './guards/auth-guard';
+import { User } from '../../shared/entities/user.entity';
+import { EmailModule } from 'src/shared/modules/email/email.module';
 
 @Module({
   imports: [
-    UsersModule,
+    UsersModule,  
     JwtModule.registerAsync({
-      imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('secret'),
+        secret: configService.get<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: '30d',
+          expiresIn: `${configService.get<string>('JWT_EXPIRATION_TIME')}`,
         },
       }),
-      inject: [ConfigService],
     }),
-    ArtistsModule,
+    TypeOrmModule.forFeature([User]),
+    EmailModule,
   ],
-  providers: [AuthService, JwtStrategy, ApiKeyStrategy],
   controllers: [AuthController],
-  exports: [AuthService],
+  providers: [
+    AuthService,
+    UsersService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AuthModule {}

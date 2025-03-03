@@ -1,11 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { User } from '../../shared/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
-import { SignupDTO } from '../auth/dto/signup.dto';
+import { DeepPartial, FindOptionsWhere, Repository, UpdateResult } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import { LoginDTO } from 'src/app/auth/dto/login.dto';
-import { v4 as uuid4 } from 'uuid';
+import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 @Injectable()
 export class UsersService {
@@ -13,51 +13,102 @@ export class UsersService {
     @InjectRepository(User)
     private userRepository: Repository<User>, 
   ) {}
-
-  async create(userDTO: SignupDTO): Promise<User> {
-    const user = new User();
-    user.firstName = userDTO.firstName;
-    user.lastName = userDTO.lastName;
-    user.email = userDTO.email;
-    user.apiKey = uuid4();
-
-    const salt = await bcrypt.genSalt(); 
-    user.password = await bcrypt.hash(userDTO.password, salt); 
-
-    const savedUser = await this.userRepository.save(user);
-    delete savedUser.password;
-    return savedUser;
+  public async findOne(where: FindOptionsWhere<User>): Promise<User | null> {
+    return await this.userRepository.findOne({ where });
   }
 
-  async findOne(data: LoginDTO): Promise<User> {
-    const user = await this.userRepository.findOneBy({ email: data.email });
-    if (!user) {
-      throw new UnauthorizedException('Could not find user');
-    }
+
+  public async create(data: DeepPartial<User>): Promise<User> {
+    const user: User = await this.userRepository.create(data);
+    return await this.userRepository.save(user);
+  }
+
+  public async update(
+    where: FindOptionsWhere<User>,
+    data: QueryDeepPartialEntity<User>,
+  ): Promise<UpdateResult> {
+    return await this.userRepository.update(where, data);
+  }
+
+  public async exists(where: FindOptionsWhere<User>): Promise<boolean> {
+    const user: boolean = await this.userRepository.existsBy(where);
+
     return user;
   }
-  async findById(id: number): Promise<User> {
-    return this.userRepository.findOneBy({ id: id });
+
+  public async profile(user: User): Promise<any> {
+    return {
+      success: true,
+      message: 'User profile retrieved successfully.',
+      data: user,
+    };
   }
-  async updateSecretKey(userId, secret: string): Promise<UpdateResult> {
-    return this.userRepository.update(
-      { id: userId },
-      {
-        twoFASecret: secret,
-        enable2FA: true,
-      },
+
+  public async changePassword(
+    data: ChangePasswordDto,
+    user: User,
+  ): Promise<any> {
+
+    if (!user.password) {
+      const foundUser = await this.userRepository.findOne({
+        where: { id: user.id },
+      });
+    
+      if (!foundUser || !foundUser.password) {
+        throw new BadRequestException('No password found for the user.');
+      }
+    
+      user = foundUser; 
+    }
+  
+    const isCurrentPasswordValid = await bcrypt.compare(
+      data.currentPassword,
+      user.password,
     );
-  }
-  async disable2FA(userId: number): Promise<UpdateResult> {
-    return this.userRepository.update(
-      { id: userId },
-      {
-        enable2FA: false,
-        twoFASecret: null,
-      },
+    if (!isCurrentPasswordValid) {
+      throw new BadRequestException(
+        'The password you entered does not match your current password.',
+      );
+    }
+  
+    if (data.password !== data.confirmPassword) {
+      throw new BadRequestException(
+        'New password and confirmation do not match.',
+      );
+    }
+  
+    const saltRounds = 10;
+    const hashedNewPassword = await bcrypt.hash(data.password, saltRounds);
+  
+    await this.update(
+      { id: user.id },
+      { password: hashedNewPassword },
     );
+  
+    return {
+      message: 'Password updated successfully.',
+    };
   }
-  async findByApiKey(apiKey: string): Promise<User> {
-    return this.userRepository.findOneBy({ apiKey });
+  
+  
+  public async updateProfile(
+    data: UpdateProfileDto,
+    user: User,
+  ): Promise<any> {
+    const dataToUpdate: Partial<User> = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+    };
+  
+    Object.assign(user, dataToUpdate);
+  
+    await this.userRepository.save(user);
+  
+    return {
+      message: 'Profile updated successfully.',
+      data: user
+    };
   }
+  
+
 }

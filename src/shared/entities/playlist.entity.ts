@@ -10,8 +10,8 @@ import {
 
 @Entity('playlists')
 export class Playlist {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   name: string;

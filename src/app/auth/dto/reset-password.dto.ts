@@ -1,40 +1,29 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from 'class-validator';
-import { PasswordMatch } from 'src/shared/validations/password-validation.dto';
+import {
+IsNotEmpty,
+IsString,
+Matches,
+MaxLength,
+MinLength,
+} from 'class-validator';
+import { PasswordMatch } from '../../../shared/validations/password-validation.dto';
 
-export class SignupDTO {
-
+export class ForgotPasswordDto {
 @ApiProperty({
 required: true,
-description: 'The first name of the user',
-example: 'Jane',
+description: 'Email address of the user',
+example: 'abideenolawuwo2000@gmail.com',
 })
 @IsString()
-@IsNotEmpty()
-firstName: string;
-
-@ApiProperty({
-required: true,
-description: 'The last name of the user',
-example: 'Doe',
-})
-@IsString()
-@IsNotEmpty()
-lastName: string;
-
-@ApiProperty({
-required: true,
-description: 'The user email',
-example: 'janedoe@gmail.com',
-})
-@IsEmail()
 @IsNotEmpty()
 email: string;
+}
 
+export class ResetPasswordDto {
 @ApiProperty({
 required: true,
-description: 'The user password (at least 8 characters)',
-example: 'Password123--',
+description: 'The user new password (at least 8 characters)',
+example: 'Password123',
 })
 @IsNotEmpty()
 @IsString()
@@ -49,14 +38,22 @@ message:
 )
 password: string;
 
+@ApiProperty({
+required: true,
+description: 'The user confirm new password (at least 8 characters)',
+example: 'Password123',
+})
+@IsNotEmpty({ message: 'Confirm password is required' })
+@IsString()
+@PasswordMatch()
+confirmPassword: string;
 
 @ApiProperty({
 required: true,
-description: 'The user password (at least 8 characters)',
-example: 'Password123--',
+description: 'The user reset password token',
+example: 'tywokqixdxapmquhqrdeqokwugwrdw9wq--=-458hdsgvsfcq5e581f2rd2528y_',
 })
 @IsString()
-@IsNotEmpty({ message: 'Confirm password is required' })
-@PasswordMatch()
-confirmPassword: string;
+@IsNotEmpty()
+token: string;
 }

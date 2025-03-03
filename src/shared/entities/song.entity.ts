@@ -11,8 +11,8 @@ import {
 
 @Entity('songs')
 export class Song {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   title: string;

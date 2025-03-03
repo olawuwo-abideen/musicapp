@@ -1,42 +1,44 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, HttpAdapterHost } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { HttpExceptionFilter } from './shared/exceptions/http.exception';
 
-declare const module: any;
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+    
+  });
+
+    const port = parseInt(String(process.env.PORT)) 
+
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new HttpExceptionFilter(httpAdapter));
+
 
   const config = new DocumentBuilder() 
     .setTitle('Musicapp')
     .setDescription('A Musicapp Api documentation')
     .setVersion('1.0')
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT token',
-        in: 'header',
-      },
-      'JWT-auth',
-    )
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config); 
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api-docs', app, document,{
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
 
-  const configService = app.get(ConfigService);
-  await app.listen(configService.get<number>('port'));
-  console.log(configService.get<string>('NODE_ENV'));
+  await app.listen(port, '0.0.0.0');
 
-  if (module.hot) {
-    module.hot.accept();
-    module.hot.dispose(() => app.close());
-  }
 }
 bootstrap();
+
+

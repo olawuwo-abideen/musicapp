@@ -1,98 +1,159 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from 'src/app/users/users.service';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+  NotFoundException,
+  ConflictException,
+  HttpStatus,
+  } from '@nestjs/common';
+  import {  Response } from 'express';
+import { UsersService } from '../users/users.service';
+  import { EntityManager, Repository } from 'typeorm';
+  import { SignupDTO } from './dto/signup.dto';
+  import { User } from 'src/shared/entities/user.entity';
 import { LoginDTO } from './dto/login.dto';
-import { User } from 'src/shared/entities/user.entity';
-import * as bcrypt from 'bcryptjs';
-import { JwtService } from '@nestjs/jwt';
-import { ArtistsService } from 'src/app/artists/artists.service';
-import { Enable2FAType, PayloadType } from './types';
-import * as speakeasy from 'speakeasy';
-import { UpdateResult } from 'typeorm';
-import { ConfigService } from '@nestjs/config';
-
-@Injectable()
-export class AuthService {
+  import { JwtService } from '@nestjs/jwt';
+  import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+  import { EmailService } from 'src/shared/modules/email/email.service';
+  import { ResetPasswordDto } from './dto/reset-password.dto';
+  import { ConfigService } from '@nestjs/config';
+  import * as bcryptjs from "bcryptjs"
+  
+  @Injectable()
+  export class AuthService {
+  logger: any;
   constructor(
-    private userService: UsersService,
-    private jwtService: JwtService,
-    private artistsService: ArtistsService,
-    private configService: ConfigService,
+  private readonly userService: UsersService,
+  private readonly jwtService: JwtService,
+  private readonly configService: ConfigService,
+  @InjectEntityManager() private readonly entityManager: EntityManager,
+  @InjectRepository(User)
+  private readonly userRepository: Repository<User>,
+  private readonly emailService: EmailService
   ) {}
-
-  async login(
-    loginDTO: LoginDTO,
-  ): Promise<
-    { accessToken: string } | { validate2FA: string; message: string }
-  > {
-    const user = await this.userService.findOne(loginDTO); 
-
-    const passwordMatched = await bcrypt.compare(
-      loginDTO.password,
-      user.password,
-    );
-
-    if (passwordMatched) {
-      delete user.password;
-      const payload: PayloadType = { email: user.email, userId: user.id };
-      const artist = await this.artistsService.findArtist(user.id); 
-      if (artist) {
-        payload.artistId = artist.id;
-      }
-      if (user.enable2FA && user.twoFASecret) {
-        return {
-          validate2FA: 'http://localhost:3000/auth/validate-2fa',
-          message:
-            'Please sends the one time password/token from your Google Authenticator App',
-        };
-      }
-      return {
-        accessToken: this.jwtService.sign(payload),
-      };
-    } else {
-      throw new UnauthorizedException('Password does not match'); 
-    }
+  
+  
+  public async signup(data: SignupDTO) {
+  const existingEmailUser = await this.userRepository.findOne({
+  where: { email: data.email },
+  });
+  
+  if (existingEmailUser) {
+  throw new ConflictException('Email is already in use');
   }
-  async enable2FA(userId: number): Promise<Enable2FAType> {
-    const user = await this.userService.findById(userId); 
-    if (user.enable2FA) {
-      return { secret: user.twoFASecret };
-    }
-    const secret = speakeasy.generateSecret(); 
-    console.log(secret);
-    user.twoFASecret = secret.base32; 
-    await this.userService.updateSecretKey(user.id, user.twoFASecret); 
-    return { secret: user.twoFASecret };
+  const saltRounds = 10;
+  const password: string = await bcryptjs.hash(data.password, saltRounds);
+  let user: User = this.userRepository.create({
+  firstName: data.firstName,
+  lastName: data.lastName,
+  email: data.email,
+  password: password,
+  });
+  user = await this.entityManager.transaction(async (manager) => {
+  return await manager.save(User, user);
+  });
+  return {
+  message: 'User signup successfully',
+  user
   }
-
-  async validate2FAToken(
-    userId: number,
-    token: string,
-  ): Promise<{ verified: boolean }> {
-    try {
-      const user = await this.userService.findById(userId);
-      const verified = speakeasy.totp.verify({
-        secret: user.twoFASecret,
-        token: token,
-        encoding: 'base32',
-      });
-      if (verified) {
-        return { verified: true };
-      } else {
-        return { verified: false };
-      }
-    } catch (err) {
-      throw new UnauthorizedException('Error verifying token');
-    }
   }
-  async disable2FA(userId: number): Promise<UpdateResult> {
-    return this.userService.disable2FA(userId);
+  
+  public async login({ email, password }: LoginDTO) {
+  const user: User | null = await this.userService.findOne({ email });
+  if (!user || !(await bcryptjs.compare(password, user.password))) {
+  throw new UnauthorizedException('Email or password is incorrect');
   }
-
-  async validateUserByApiKey(apiKey: string): Promise<User> {
-    return this.userService.findByApiKey(apiKey);
+  return {
+  message: "User login sucessfully",
+  token: this.createAccessToken(user),
+  user,
+  };
   }
-
-  getEnvVariable() {
-    return this.configService.get<number>('port');
+  public createAccessToken(user: User): string {
+  return this.jwtService.sign({ sub: user.id });
   }
-}
+  
+  async forgotPassword(email: string): Promise<any> {
+  const user: User | null = await this.userService.findOne({ email });
+  
+  if (!user) {
+  throw new NotFoundException(`Email does not exist in our record.`);
+  }
+  
+  const payload = { email: user.email };
+  const token = this.jwtService.sign(payload, {
+  secret: this.configService.get('JWT_SECRET'),
+  expiresIn: `${this.configService.get('JWT_EXPIRATION_TIME')}`,
+  });
+  
+  user.resetToken = token;
+  
+  await this.userRepository.update(
+  {
+  id: user.id,
+  },
+  {
+  resetToken: token,
+  },
+  );
+  
+  await this.emailService.sendResetPasswordLink(user);
+  return { message: 'Reset token sent to user email' };
+  }
+  
+  public async decodeConfirmationToken(token: string) {
+  try {
+  const payload = await this.jwtService.verify(token, {
+  secret: this.configService.get('JWT_SECRET'),
+  });
+  
+  return payload?.email;
+  } catch (error) {
+  if (error?.name === 'TokenExpiredError') {
+  throw new BadRequestException('Reset password link expired.');
+  }
+  throw new BadRequestException('Reset password link expired.');
+  }
+  }
+  
+  async resetPassword(payload: ResetPasswordDto): Promise<void> {
+  const email = await this.decodeConfirmationToken(payload.token);
+  
+  const user: User | null = await this.userService.findOne({
+  email,
+  resetToken: payload.token,
+  });
+  
+  if (!user) {
+  throw new BadRequestException(`Reset token expired. please try again.`);
+  }
+  const saltRounds = 10;
+  const password = await bcryptjs.hash(payload.password, saltRounds);
+  
+  await this.userRepository.update(
+  { id: user.id },
+  { password, resetToken: null },
+  );
+  }
+  
+  
+  async logout(user: Partial<User>, res: Response) {
+  if (!user || !user.id) {
+  throw new UnauthorizedException('User identification is missing');
+  }
+  
+  try {
+  res.clearCookie('jwt');
+  this.logger.log(`User with ID ${user.id} has logged out successfully.`);
+  return res.status(HttpStatus.OK).json({ message: 'Sign-out successful' });
+  } catch (error) {
+  this.logger.error('An error occurred during sign-out.', error);
+  return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+  message: 'An error occurred during sign-out. Please try again later.',
+  });
+  }
+  }
+  
+  
+  }
+  
