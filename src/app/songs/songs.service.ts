@@ -1,64 +1,73 @@
-import { ConsoleLogger, Injectable } from '@nestjs/common';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
-import {
-  paginate,
-  Pagination,
-  IPaginationOptions,
-} from 'nestjs-typeorm-paginate';
-import { Song } from '../../shared/entities/song.entity';
-import { CreateSongDTO } from './dto/create-song-dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateSongDTO, UpdateSongDto } from './dto/song-dto';
+import { PaginationDto } from 'src/shared/dtos/pagination.dto';
+import { Song } from 'src/shared/entities/song.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UpdateSongDto } from './dto/update-song-dto';
-import { Artist } from 'src/shared/entities/artists.entity';
+import { Repository } from 'typeorm';
+import { Like } from 'typeorm';
 
 @Injectable()
 export class SongsService {
   constructor(
     @InjectRepository(Song)
-    private songsRepository: Repository<Song>,
-    @InjectRepository(Artist)
-    private artistsRepository: Repository<Artist>,
+    private songRepository: Repository<Song>,
   ) {}
 
-  async create(songDTO: CreateSongDTO): Promise<Song> {
-    const song = new Song();
-    song.title = songDTO.title;
-    song.artists = songDTO.artists;
-    song.duration = songDTO.duration;
-    song.lyrics = songDTO.lyrics;
-    song.releasedDate = songDTO.releasedDate;
-
-    console.log(songDTO.artists);
-
-    // find all the artits on the based on ids
-    const artists = await this.artistsRepository.findBy(songDTO.artists);
-    console.log(artists);
-    //set the relation with artist and songs
-    song.artists = artists;
-
-    return this.songsRepository.save(song);
+  public async createSong(data: CreateSongDTO): Promise<Song> {
+    const song = this.songRepository.create(data);
+    return await this.songRepository.save(song);
   }
 
-  findAll(): Promise<Song[]> {
-    return this.songsRepository.find();
+  public async updateSong(id: string, data: UpdateSongDto): Promise<Song> {
+    const song = await this.songRepository.findOne({ where: { id } });
+    if (!song) {
+      throw new NotFoundException(`Song with ID ${id} not found`);
+    }
+    Object.assign(song, data);
+    return await this.songRepository.save(song);
   }
 
-  findOne(id: number): Promise<Song> {
-    return this.songsRepository.findOneBy({ id });
+  public async getSongs(paginationData: PaginationDto): Promise<{ data: Song[], total: number }> {
+    const { page, pageSize } = paginationData;
+    
+    const skip = (page - 1) * pageSize;
+    const take = pageSize;
+
+    const [data, total] = await this.songRepository.findAndCount({
+      take, 
+      skip, 
+    });
+
+    return { data, total };
   }
 
-  remove(id: number): Promise<DeleteResult> {
-    return this.songsRepository.delete(id);
+  public async searchSongs(searchQuery: string | null, paginationData: PaginationDto): Promise<{ data: Song[], total: number }> {
+    const { page, pageSize } = paginationData;
+    
+    const skip = (page - 1) * pageSize;
+    const take = pageSize;
+
+    if (!searchQuery) {
+      return this.getSongs(paginationData);
+    }
+
+    const [data, total] = await this.songRepository.findAndCount({
+      where: {
+        title: Like(`%${searchQuery}%`), 
+      },
+      take, 
+      skip, 
+    });
+
+    return { data, total };
   }
 
-  update(id: number, recordToUpdate: UpdateSongDto): Promise<UpdateResult> {
-    return this.songsRepository.update(id, recordToUpdate);
-  }
 
-  async paginate(options: IPaginationOptions): Promise<Pagination<Song>> {
-    const queryBuilder = this.songsRepository.createQueryBuilder('c');
-    queryBuilder.orderBy('c.releasedDate', 'DESC');
-
-    return paginate<Song>(queryBuilder, options);
+  public async deleteSong(id: string): Promise<void> {
+    const song = await this.songRepository.findOne({ where: { id } });
+    if (!song) {
+      throw new NotFoundException(`Song with ID ${id} not found`);
+    }
+    await this.songRepository.delete(id);
   }
 }

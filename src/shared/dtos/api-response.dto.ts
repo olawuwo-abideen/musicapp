@@ -2,7 +2,7 @@ export class ApiResponseDto<T> {
   public message: string;
   public data: T;
 
-  constructor(data: T, message: string = 'Successful') {
+  constructor(message: string = 'Successful', data: T) {
     this.message = message;
     this.data = data;
   }

@@ -8,6 +8,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { User } from './user.entity';
 
 @Entity('songs')
 export class Song {
@@ -16,9 +17,6 @@ export class Song {
 
   @Column()
   title: string;
-
-  // @Column('varchar', { array: true })
-  // artists: string[];
 
   @Column('date')
   releasedDate: Date;
@@ -29,13 +27,14 @@ export class Song {
   @Column('text')
   lyrics: string;
 
+  @ManyToOne(() => User, (user) => user.song)
+  user: User;
+  
   @ManyToMany(() => Artist, (artist) => artist.songs, { cascade: true })
   @JoinTable({ name: 'songs_artists' })
   artists: Artist[];
 
-  /**
-   * Many songs can belong to playlist for each unique user
-   */
+
   @ManyToOne(() => Playlist, (playList) => playList.songs)
   playList: Playlist;
 }
