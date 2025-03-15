@@ -1,18 +1,85 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { Playlist } from '../../shared/entities/playlist.entity';
-import { CreatePlayListDto } from './dto/create-playlist.dto';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { CreatePlayListDto, AddSongToPlayListDto,RemoveSongToPlayListDto } from './dto/create-playlist.dto';
 import { PlayListsService } from './playlists.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { User } from 'src/shared/entities/user.entity';
+import { CurrentUser } from 'src/shared/decorators/current-user.decorator';
+import { IsValidUUIDPipe } from 'src/shared/pipes/is-valid-uuid.pipe';
+import { UpdatePlayListDto } from './dto/create-playlist.dto';
 
+@ApiBearerAuth()
 @Controller('playlists')
-@ApiTags('playlists')
+@ApiTags('Playlists')
 export class PlayListsController {
   constructor(private playListService: PlayListsService) {}
-  @Post()
-  create(
-    @Body()
-    playlistDTO: CreatePlayListDto,
-  ): Promise<Playlist> {
-    return this.playListService.create(playlistDTO);
+
+@Post('')
+  public async createPlaylist(
+    @Body() payload: CreatePlayListDto,
+    @CurrentUser() user: User,
+  ) {
+    return  await this.playListService.createPlaylist(payload, user)
+    
   }
+
+  @Get('')
+  public async getPlaylists(@CurrentUser() user: User) {
+    return await this.playListService.getPlaylists(user);
+  }
+
+  @Get(':id')
+  public async getPlaylist(
+    @Param('id', IsValidUUIDPipe) id: string,
+    @CurrentUser() user: User,
+  ) {
+    return await this.playListService.getPlaylist(id, user)
+  }
+
+  @Put(':id')
+  public async updatePlaylist(
+    @Param('id', IsValidUUIDPipe) id: string,
+    @Body() payload: UpdatePlayListDto,
+    @CurrentUser() user: User,
+  ) {
+    return await this.playListService.updatePlaylist(id,payload, user)
+  }
+
+  @Delete(':id')
+  public async deletePlaylist(
+    @Param('id', IsValidUUIDPipe) id: string,
+    @CurrentUser() user: User,
+  ) {
+    return await this.playListService.deletePlaylist(id, user)
+  }
+
+
+
+  @Get('song/:id')
+  public async getPlaylistSongs(
+    @Param('id', IsValidUUIDPipe) playlistId: string,
+    @CurrentUser() user: User,
+  ) {
+    return await this.playListService.getPlaylistSongs(playlistId, user);
+  }
+
+  @Post('song/:id')
+  public async AddSongToPlayList(
+    @Body() payload: AddSongToPlayListDto,
+    @Param('id', IsValidUUIDPipe) id: string,
+    @CurrentUser() user: User,
+  ) {
+    return await this.playListService.AddSongToPlayList(payload,user, id)
+  }
+
+
+  @Delete('song/:id')
+  public async removeSongFromPlaylist(
+    @Body() payload: RemoveSongToPlayListDto,
+    @Param('id', IsValidUUIDPipe) id: string,
+    @CurrentUser() user: User
+  ) {
+    return await this.playListService.removeSongFromPlaylist(payload, id, user);
+  }
+
+
 }

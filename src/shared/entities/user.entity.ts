@@ -1,48 +1,64 @@
-import { Exclude } from 'class-transformer';
+import { Exclude, instanceToPlain } from 'class-transformer';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import { Favorite } from './favorite.entity';
 import { Playlist } from 'src/shared/entities/playlist.entity';
 import { Song } from './song.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
 export class User {
-@PrimaryGeneratedColumn('uuid')
-id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
+  @Column()
+  firstName: string;
 
-@Column()
-firstName: string;
+  @Column()
+  lastName: string;
 
+  @Column({ unique: true })
+  email: string;
 
-@Column()
-lastName: string;
+  @Column()
+  @Exclude()
+  password: string;
 
+  @Column({ type: 'varchar', name: 'reset_token', nullable: true })
+  @Exclude()
+  resetToken: string | null;
 
-@Column({ unique: true })
-email: string;
+  @Column({ nullable: true, type: 'text' })
+  @Exclude()
+  twoFASecret: string;
 
+  @Column({ default: false, type: 'boolean' })
+  @Exclude()
+  enable2FA: boolean;
 
-@Column()
-@Exclude()
-password: string;
+  @Column({ nullable: true })
+  @Exclude()
+  apiKey: string;
 
-@Column({ type: 'varchar', name: 'reset_token', nullable: true })
-@Exclude()
-resetToken: string | null;
+  @OneToMany(() => Playlist, (playlist) => playlist.user)
+  playlists: Playlist[];
+  
 
+  @OneToMany(() => Song, (song) => song.user)
+  songs: Song[];
 
-@Column({ nullable: true, type: 'text' })
-twoFASecret: string;
+  @OneToMany(() => Favorite, (favorite) => favorite.user)
+  favorites: Favorite[];
 
-@Column({ default: false, type: 'boolean' })
-enable2FA: boolean;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
-@Column()
-apiKey: string;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  @Exclude()
+  deletedAt: Date;
 
-@OneToMany(() => Playlist, (playList) => playList.user)
-playLists: Playlist[];
-
-@OneToMany(() => Song, (song) => song.user)
-song: Song[];
+  toJSON(): Record<string, any> {
+    return instanceToPlain(this);
+  }
 }

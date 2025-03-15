@@ -6,7 +6,6 @@ import { SongsModule } from './songs/songs.module';
 import { PlayListModule } from './playlists/playlists.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { ArtistsModule } from './artists/artists.module';
 import { ConfigModule } from '@nestjs/config';
 
 
@@ -29,7 +28,7 @@ import { ConfigModule } from '@nestjs/config';
     PlayListModule,
     AuthModule,
     UsersModule,
-    ArtistsModule,
+    
   ],
   controllers: [],
   providers: [],

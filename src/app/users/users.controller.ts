@@ -7,12 +7,12 @@ import { UsersService } from './users.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 
-@ApiBearerAuth()
 @ApiTags('User')
-@Controller('users')
+@ApiBearerAuth()
+@Controller('user')
 export class UsersController {
+    
     constructor(private readonly userService: UsersService) {}
-
     @Get('')
     @ApiOperation({ summary: 'Get current user profile' })
     @ApiResponse({ 

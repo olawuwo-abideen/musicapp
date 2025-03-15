@@ -77,54 +77,18 @@ The following API endpoints are available:
 - **GET /songs/:id**: Get a song.
 - **PUT /songs/:id**: Update a song.
 - **DELETE /songs/:id**: Remove a song.
-- **GET /search?** – Search 
-
-**Playlists**
-
-- **GET /playlists**: Create playlists.
-- **POST /playlists**: Create playlists.
-- **POST /playlists**: Create playlists.
-- **POST /playlists/song**: Create playlists.
-- **DELETE /playlists/song**: Create playlists.
-
-
-
-
-
-### **2. Music Library & Metadata**
-- **GET /songs** – Fetch all available songs  
-- **GET /songs/{songId}** – Fetch details of a specific song  
-- **GET /albums** – Fetch all albums  
-- **GET /albums/{albumId}** – Fetch details of a specific album  
-- **GET /artists** – Fetch all artists  
-- **GET /artists/{artistId}** – Fetch details of a specific artist  
-- **GET /genres** – Fetch all music genres  
-- **GET /genres/{genreId}** – Fetch songs under a specific genre  
-
----
-
-### **3. Music Playback**
-- **POST /player/play** – Start playing a song  
-- **POST /player/pause** – Pause the currently playing song  
-- **POST /player/next** – Skip to the next song  
-- **POST /player/previous** – Play the previous song  
-- **POST /player/seek** – Seek to a specific position in the song  
-
-
-
-### **4. Playlists & Favorites**
-- **GET /playlists** – Fetch user's playlists  
-- **POST /playlists** – Create a new playlist  
-- **PUT /playlists/{playlistId}** – Update a playlist  
-- **DELETE /playlists/{playlistId}** – Delete a playlist  
-- **POST /playlists/{playlistId}/songs** – Add a song to a playlist  
-- **DELETE /playlists/{playlistId}/songs/{songId}** – Remove a song from a playlist  
+- **GET /search?query** – Search for songs
 - **GET /favorites** – Fetch the user's favorite songs  
 - **POST /favorites/{songId}** – Add a song to favorites  
 - **DELETE /favorites/{songId}** – Remove a song from favorites  
 
+**Playlists**
 
-
-### **5. Search & Recommendations**
-- **GET /search?query=xyz** – Search for songs, albums, or artists  
-- **GET /recommendations** – Get song recommendations based on listening history  
+- **GET /playlists** – Fetch user's playlists  
+- **POST /playlists** – Create a new playlist  
+- **GET /playlists/{playlistId}** – Get a playlist 
+- **PUT /playlists/{playlistId}** – Update a playlist  
+- **GET /playlists/song/{playlistId}** – Get playlist song
+- **DELETE /playlists/song/{playlistId}** – Delete a playlist  
+- **POST /playlists/song/{playlistId}** – Add a song to a playlist  
+- **DELETE /playlists/song/{playlistId}** – Remove a song from a playlist  

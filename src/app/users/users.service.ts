@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { User } from '../../shared/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, FindOptionsWhere, Repository, UpdateResult } from 'typeorm';
@@ -44,52 +44,34 @@ export class UsersService {
     };
   }
 
+
   public async changePassword(
     data: ChangePasswordDto,
     user: User,
-  ): Promise<any> {
-
-    if (!user.password) {
-      const foundUser = await this.userRepository.findOne({
-        where: { id: user.id },
-      });
-    
-      if (!foundUser || !foundUser.password) {
-        throw new BadRequestException('No password found for the user.');
-      }
-    
-      user = foundUser; 
-    }
+  ): Promise<{ message: string }> {
+    const userWithPassword = await this.userRepository.findOne({
+      where: { id: user.id },
+      select: ['id', 'password']
+    });
   
-    const isCurrentPasswordValid = await bcrypt.compare(
-      data.currentPassword,
-      user.password,
-    );
-    if (!isCurrentPasswordValid) {
+    const isMatch = await bcrypt.compare(data.currentPassword, userWithPassword.password);
+    if (!isMatch) {
       throw new BadRequestException(
         'The password you entered does not match your current password.',
       );
     }
   
-    if (data.password !== data.confirmPassword) {
-      throw new BadRequestException(
-        'New password and confirmation do not match.',
-      );
-    }
-  
-    const saltRounds = 10;
-    const hashedNewPassword = await bcrypt.hash(data.password, saltRounds);
+    const newPassword = await bcrypt.hash(data.password, 10);
   
     await this.update(
       { id: user.id },
-      { password: hashedNewPassword },
+      { password: newPassword },
     );
   
     return {
       message: 'Password updated successfully.',
     };
   }
-  
   
   public async updateProfile(
     data: UpdateProfileDto,

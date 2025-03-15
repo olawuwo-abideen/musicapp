@@ -57,18 +57,38 @@ import { LoginDTO } from './dto/login.dto';
   user
   }
   }
-  
+
   public async login({ email, password }: LoginDTO) {
-  const user: User | null = await this.userService.findOne({ email });
-  if (!user || !(await bcryptjs.compare(password, user.password))) {
-  throw new UnauthorizedException('Email or password is incorrect');
+    const user: User | null = await this.userService.findOne({ email });
+  
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+  
+    const isPasswordValid = await bcryptjs.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+  
+    return {
+      message: "User login successfully",
+      token: this.createAccessToken(user),
+      user,
+    };
   }
-  return {
-  message: "User login sucessfully",
-  token: this.createAccessToken(user),
-  user,
-  };
-  }
+  
+  
+  // public async login({ email, password }: LoginDTO) {
+  // const user: User | null = await this.userService.findOne({ email });
+  // if (!user || !(await bcryptjs.compare(password, user.password))) {
+  // throw new UnauthorizedException('Email or password is incorrect');
+  // }
+  // return {
+  // message: "User login sucessfully",
+  // token: this.createAccessToken(user),
+  // user,
+  // };
+  // }
   public createAccessToken(user: User): string {
   return this.jwtService.sign({ sub: user.id });
   }

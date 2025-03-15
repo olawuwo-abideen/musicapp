@@ -3,10 +3,13 @@ import { SongsController } from './songs.controller';
 import { SongsService } from './songs.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Song } from '../../shared/entities/song.entity';
-import { Artist } from 'src/shared/entities/artists.entity';
+import { Favorite } from 'src/shared/entities/favorite.entity';
+import { User } from 'src/shared/entities/user.entity';
+
+
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Song, Artist])],
+  imports: [TypeOrmModule.forFeature([Song, User, Favorite])],
   controllers: [SongsController],
   providers: [SongsService],
 })

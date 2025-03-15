@@ -1,55 +1,100 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
-    IsArray,
     IsDateString,
-    IsMilitaryTime,
     IsNotEmpty,
-    IsNumber,
-    IsOptional,
     IsString,
   } from 'class-validator';
-  
+  import { Genre } from 'src/shared/entities/song.entity';
+
   export class CreateSongDTO {
+
+    @ApiProperty({
+    required: true,
+    description: 'The song title',
+    example: 'Wicked',
+    })
     @IsString()
     @IsNotEmpty()
     title : string;
   
+    @ApiProperty({
+      required: true,
+      description: 'The song artists',
+      example: 'The weekend',
+      })
     @IsNotEmpty()
-    @IsArray()
-    @IsNumber({}, { each: true })
-     artists;
+    artists: string;
   
+    @ApiProperty({
+      required: true,
+      description: 'The song release data',
+      example: '2019-11-29T00:00:00.000Z',
+      })
     @IsNotEmpty()
     @IsDateString()
-     releasedDate: Date;
+    releasedDate: Date;
   
-    @IsMilitaryTime()
+  
+    @ApiProperty({
+      required: true,
+      description: 'The song duration',
+      example: '00:03:22',
+      })
     @IsNotEmpty()
-     duration: Date;
+    duration: Date;
   
+    @ApiProperty({
+      required: true,
+      description: 'The song genre',
+      example: 'pop',
+      })
     @IsString()
-    @IsOptional()
-    readonly lyrics: string;
+    @IsNotEmpty()
+    genre: Genre;
   }
   
   export class UpdateSongDto {
-    @IsString()
-    @IsOptional()
-    readonly title: string;
-  
-    @IsOptional()
-    @IsArray()
-    @IsNumber({}, { each: true })
-    readonly artists;
-  
-    @IsDateString()
-    @IsOptional()
-    readonly releasedDate: Date;
-  
-    @IsMilitaryTime()
-    @IsOptional()
-    readonly duration: Date;
-  
-    @IsString()
-    @IsOptional()
-    readonly lyrics: string;
+    @ApiProperty({
+      required: true,
+      description: 'The song title',
+      example: 'Wicked',
+      })
+      @IsString()
+      @IsNotEmpty()
+      title : string;
+    
+      @ApiProperty({
+        required: true,
+        description: 'The song artists',
+        example: 'The weekend',
+        })
+      @IsNotEmpty()
+      artists: string;
+    
+      @ApiProperty({
+        required: true,
+        description: 'The song release data',
+        example: '2019-11-29T00:00:00.000Z',
+        })
+      @IsNotEmpty()
+      @IsDateString()
+      releasedDate: Date;
+    
+    
+      @ApiProperty({
+        required: true,
+        description: 'The song duration',
+        example: '00:03:22',
+        })
+      @IsNotEmpty()
+      duration: Date;
+    
+      @ApiProperty({
+        required: true,
+        description: 'The song genre',
+        example: 'pop',
+        })
+      @IsString()
+      @IsNotEmpty()
+      genre: Genre;
   }
