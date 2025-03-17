@@ -6,6 +6,9 @@ import { User } from 'src/shared/entities/user.entity';
 import { UsersService } from './users.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { UpdateResult } from 'typeorm';
+import { Enable2FAType } from 'src/shared/types/type';
+import {ValidateTokenDTO} from "../../shared/dtos/validate-token.dto"
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -54,5 +57,31 @@ export class UsersController {
     return await this.userService.updateProfile(payload, user);
     }
 
+
+    @Get('enable-2fa')
+    enable2FA(
+        @CurrentUser() user: User
+    ): Promise<Enable2FAType> {
+      return this.userService.enable2FA(user);
+    }
+  
+    @Post('validate-2fa')
+    validate2FA(
+        @CurrentUser() user: User,
+      @Body()
+      ValidateTokenDTO: ValidateTokenDTO,
+    ): Promise<{ verified: boolean }> {
+      return this.userService.validate2FAToken(
+        user,
+        ValidateTokenDTO.token,
+      );
+    }
+    @Get('disable-2fa')
+    disable2FA(
+      @CurrentUser() user: User,
+    ): Promise<{  message: string }> {
+      return this.userService.disable2FA(user);
+    }
+    
 
 }

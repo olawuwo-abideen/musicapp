@@ -9,10 +9,7 @@ import {
   @ValidatorConstraint({ name: 'PasswordMatch', async: false })
   export class PasswordMatchValidator implements ValidatorConstraintInterface {
     validate(value: any, args: ValidationArguments) {
-      // data
       const { password, confirmPassword } = args.object as any;
-  
-      // check if password and confirmPassword match
       return password === confirmPassword;
     }
   

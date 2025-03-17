@@ -6,6 +6,7 @@ import * as bcrypt from 'bcryptjs';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import * as speakeasy from 'speakeasy';
 
 @Injectable()
 export class UsersService {
@@ -91,6 +92,73 @@ export class UsersService {
       data: user
     };
   }
+  
+  async enable2FA(user: User): Promise<{ secret: string; message: string }> {
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+    if (user.enable2FA) {
+      return {
+        message: '2FA is already enabled for this user',
+        secret: user.twoFASecret,
+      };
+    }
+    const secret = speakeasy.generateSecret();
+    user.twoFASecret = secret.base32;
+    user.enable2FA = true;
+    console.log(secret);
+    await this.userRepository.save(user);
+    return {
+      message: '2FA has been successfully enabled',
+      secret: user.twoFASecret,
+    };
+  }
+  
+  
+  
+
+  async validate2FAToken(user: User, token: string): Promise<{ verified: boolean; message?: string }> {
+    try {
+      if (!user || !user.twoFASecret) {
+        throw new UnauthorizedException('Invalid user or 2FA not enabled');
+      }
+  
+      console.log('User secret:', user.twoFASecret);
+      console.log('Token:', token);
+  
+      const verified = speakeasy.totp.verify({
+        secret: user.twoFASecret,
+        token,
+        encoding: 'base32',
+        window: 2, // Allows more time drift
+      });
+  
+      console.log('Verified:', verified);
+  
+      if (verified) {
+        return {
+          verified: true,
+          message: '2FA verification successful',
+        };
+      }
+  
+      return { verified: false };
+    } catch (err) {
+      throw new UnauthorizedException('Error verifying token');
+    }
+  }
+
+  async disable2FA(user: User): Promise<{ message: string }> {
+    await this.userRepository.update(user.id, {
+      twoFASecret: null,
+      enable2FA: false,
+    });
+  
+    return {
+      message: '2FA has been successfully disabled',
+    };
+  }
+  
   
 
 }
