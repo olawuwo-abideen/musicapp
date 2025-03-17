@@ -8,7 +8,7 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateResult } from 'typeorm';
 import { Enable2FAType } from 'src/shared/types/type';
-import {ValidateTokenDTO} from "../../shared/dtos/validate-token.dto"
+import {ValidateTokenDTO} from "./dto/validate-token.dto"
 
 @ApiTags('User')
 @ApiBearerAuth()
