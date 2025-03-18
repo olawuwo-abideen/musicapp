@@ -1,5 +1,4 @@
-A Music app 
-
+A Music app that allows users to explore, play, and manage their favorite songs. It includes functionalities such as user authentication, music playback, playlists, favorites, and search capabilities. Users can browse songs by artists, albums, and genres, create custom playlists, and enjoy seamless music streaming. 
 
 Installation
 
