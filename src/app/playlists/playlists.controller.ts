@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, 
+  Controller, 
+  Delete, 
+  Get, 
+  Param, 
+  Post, 
+  Put, 
+  UseInterceptors,
+ } from '@nestjs/common';
 import { CreatePlayListDto, AddSongToPlayListDto,RemoveSongToPlayListDto } from './dto/create-playlist.dto';
 import { PlayListsService } from './playlists.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -6,6 +14,7 @@ import { User } from 'src/shared/entities/user.entity';
 import { CurrentUser } from 'src/shared/decorators/current-user.decorator';
 import { IsValidUUIDPipe } from 'src/shared/pipes/is-valid-uuid.pipe';
 import { UpdatePlayListDto } from './dto/create-playlist.dto';
+import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 
 @ApiBearerAuth()
 @Controller('playlists')
@@ -22,11 +31,18 @@ export class PlayListsController {
     
   }
 
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('__key')
+  @CacheTTL(60000)
   @Get('')
   public async getPlaylists(@CurrentUser() user: User) {
     return await this.playListService.getPlaylists(user);
   }
 
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('__key')
+  @CacheTTL(60000)
+  @Get('')
   @Get(':id')
   public async getPlaylist(
     @Param('id', IsValidUUIDPipe) id: string,
@@ -54,6 +70,10 @@ export class PlayListsController {
 
 
 
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey('__key')
+  @CacheTTL(60000)
+  @Get('')
   @Get('song/:id')
   public async getPlaylistSongs(
     @Param('id', IsValidUUIDPipe) playlistId: string,
