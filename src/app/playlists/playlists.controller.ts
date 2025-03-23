@@ -1,13 +1,18 @@
-import { Body, 
-  Controller, 
-  Delete, 
-  Get, 
-  Param, 
-  Post, 
-  Put, 
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
   UseInterceptors,
- } from '@nestjs/common';
-import { CreatePlayListDto, AddSongToPlayListDto,RemoveSongToPlayListDto } from './dto/create-playlist.dto';
+} from '@nestjs/common';
+import {
+  CreatePlayListDto,
+  AddSongToPlayListDto,
+  RemoveSongToPlayListDto,
+} from './dto/create-playlist.dto';
 import { PlayListsService } from './playlists.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/shared/entities/user.entity';
@@ -19,36 +24,33 @@ import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 @ApiBearerAuth()
 @Controller('playlists')
 @ApiTags('Playlists')
+@UseInterceptors(CacheInterceptor) 
 export class PlayListsController {
   constructor(private playListService: PlayListsService) {}
 
-@Post('')
+  @Post('')
   public async createPlaylist(
     @Body() payload: CreatePlayListDto,
     @CurrentUser() user: User,
   ) {
-    return  await this.playListService.createPlaylist(payload, user)
-    
+    return await this.playListService.createPlaylist(payload, user);
   }
 
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey('__key')
-  @CacheTTL(60000)
   @Get('')
+  @CacheKey('__key')
+  @CacheTTL(600) // 10 minutes
   public async getPlaylists(@CurrentUser() user: User) {
     return await this.playListService.getPlaylists(user);
   }
 
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey('__key')
-  @CacheTTL(60000)
-  @Get('')
   @Get(':id')
+  @CacheKey('__key') // Dynamic cache key per playlist
+  @CacheTTL(600) 
   public async getPlaylist(
     @Param('id', IsValidUUIDPipe) id: string,
     @CurrentUser() user: User,
   ) {
-    return await this.playListService.getPlaylist(id, user)
+    return await this.playListService.getPlaylist(id, user);
   }
 
   @Put(':id')
@@ -57,7 +59,7 @@ export class PlayListsController {
     @Body() payload: UpdatePlayListDto,
     @CurrentUser() user: User,
   ) {
-    return await this.playListService.updatePlaylist(id,payload, user)
+    return await this.playListService.updatePlaylist(id, payload, user);
   }
 
   @Delete(':id')
@@ -65,16 +67,12 @@ export class PlayListsController {
     @Param('id', IsValidUUIDPipe) id: string,
     @CurrentUser() user: User,
   ) {
-    return await this.playListService.deletePlaylist(id, user)
+    return await this.playListService.deletePlaylist(id, user);
   }
 
-
-
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey('__key')
-  @CacheTTL(60000)
-  @Get('')
   @Get('song/:id')
+  @CacheKey('__key') 
+  @CacheTTL(600) 
   public async getPlaylistSongs(
     @Param('id', IsValidUUIDPipe) playlistId: string,
     @CurrentUser() user: User,
@@ -88,18 +86,15 @@ export class PlayListsController {
     @Param('id', IsValidUUIDPipe) id: string,
     @CurrentUser() user: User,
   ) {
-    return await this.playListService.AddSongToPlayList(payload,user, id)
+    return await this.playListService.AddSongToPlayList(payload, user, id);
   }
-
 
   @Delete('song/:id')
   public async removeSongFromPlaylist(
     @Body() payload: RemoveSongToPlayListDto,
     @Param('id', IsValidUUIDPipe) id: string,
-    @CurrentUser() user: User
+    @CurrentUser() user: User,
   ) {
     return await this.playListService.removeSongFromPlaylist(payload, id, user);
   }
-
-
 }
