@@ -4,7 +4,7 @@ import {
     IsNotEmpty,
     IsString,
   } from 'class-validator';
-  import { Genre } from 'src/shared/entities/song.entity';
+  import { Genre } from '../../../shared/entities/song.entity';
 
   export class CreateSongDTO {
 

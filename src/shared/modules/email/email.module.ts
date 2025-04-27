@@ -3,7 +3,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
-import { UsersModule } from 'src/app/users/users.module';
+import { UsersModule } from '../../../app/users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../../../shared/entities/user.entity';
 import { EmailService } from './email.service';

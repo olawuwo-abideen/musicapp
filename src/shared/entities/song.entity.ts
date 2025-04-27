@@ -1,4 +1,4 @@
-import { Playlist } from 'src/shared/entities/playlist.entity';
+import { Playlist } from '../../shared/entities/playlist.entity';
 import {
   Column,
   CreateDateColumn,
@@ -53,7 +53,7 @@ export class Song {
   playList: Playlist;
 
   @OneToMany(() => Favorite, (favorite) => favorite.song)
-  favorites: Favorite;
+  favorites: Favorite[];
 
 
   @CreateDateColumn({

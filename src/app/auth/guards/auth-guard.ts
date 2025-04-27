@@ -8,7 +8,7 @@ import {
   import { JwtService } from '@nestjs/jwt';
   import { IncomingMessage } from 'http';
   import { Reflector } from '@nestjs/core';
-  import { UsersService } from 'src/app/users/users.service';
+  import { UsersService } from '../../../app/users/users.service';
   import { User } from '../../../shared/entities/user.entity';
   import { IS_PUBLIC_KEY } from '../../../shared/decorators/public.decorator';
   

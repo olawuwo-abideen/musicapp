@@ -1,7 +1,7 @@
 import { Exclude, instanceToPlain } from 'class-transformer';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 import { Favorite } from './favorite.entity';
-import { Playlist } from 'src/shared/entities/playlist.entity';
+import { Playlist } from '../../shared/entities/playlist.entity';
 import { Song } from './song.entity';
 
 @Entity('users')

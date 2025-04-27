@@ -15,9 +15,9 @@ import {
 } from './dto/create-playlist.dto';
 import { PlayListsService } from './playlists.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { User } from 'src/shared/entities/user.entity';
-import { CurrentUser } from 'src/shared/decorators/current-user.decorator';
-import { IsValidUUIDPipe } from 'src/shared/pipes/is-valid-uuid.pipe';
+import { User } from '../../shared/entities/user.entity';
+import { CurrentUser } from '../../shared/decorators/current-user.decorator';
+import { IsValidUUIDPipe } from '../../shared/pipes/is-valid-uuid.pipe';
 import { UpdatePlayListDto } from './dto/create-playlist.dto';
 import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 
@@ -38,13 +38,13 @@ export class PlayListsController {
 
   @Get('')
   @CacheKey('__key')
-  @CacheTTL(600) // 10 minutes
+  @CacheTTL(600) 
   public async getPlaylists(@CurrentUser() user: User) {
     return await this.playListService.getPlaylists(user);
   }
 
   @Get(':id')
-  @CacheKey('__key') // Dynamic cache key per playlist
+  @CacheKey('__key') 
   @CacheTTL(600) 
   public async getPlaylist(
     @Param('id', IsValidUUIDPipe) id: string,

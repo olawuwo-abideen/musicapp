@@ -1,6 +1,6 @@
 import { Exclude, instanceToPlain } from 'class-transformer';
-import { Song } from 'src/shared/entities/song.entity';
-import { User } from 'src/shared/entities/user.entity';
+import { Song } from '../../shared/entities/song.entity';
+import { User } from '../../shared/entities/user.entity';
 import {
   Column,
   CreateDateColumn,

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from 'class-validator';
-import { PasswordMatch } from 'src/shared/validations/password-validation.dto';
+import { PasswordMatch } from '../../../shared/validations/password-validation.dto';
 
 export class SignupDTO {
 

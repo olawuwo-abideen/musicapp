@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException, InternalServerErrorException, BadRequestException } from '@nestjs/common';
 import { CreateSongDTO, UpdateSongDto } from './dto/song-dto';
-import { Song } from 'src/shared/entities/song.entity';
+import { Song } from '../../shared/entities/song.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
-import { Favorite } from 'src/shared/entities/favorite.entity';
-import { User } from 'src/shared/entities/user.entity';
+import { Favorite } from '../../shared/entities/favorite.entity';
+import { User } from '../../shared/entities/user.entity';
 
 
 @Injectable()

@@ -1,13 +1,13 @@
 import { Body, Controller, Get, HttpStatus, Post, Put, Request } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CurrentUser } from 'src/shared/decorators/current-user.decorator';
-import RequestWithUser from 'src/shared/dtos/request-with-user.dto';
-import { User } from 'src/shared/entities/user.entity';
+import { CurrentUser } from '../../shared/decorators/current-user.decorator';
+import RequestWithUser from '../../shared/dtos/request-with-user.dto';
+import { User } from '../../shared/entities/user.entity';
 import { UsersService } from './users.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateResult } from 'typeorm';
-import { Enable2FAType } from 'src/shared/types/type';
+import { Enable2FAType } from '../../shared/types/type';
 import {ValidateTokenDTO} from "./dto/validate-token.dto"
 
 @ApiTags('User')
