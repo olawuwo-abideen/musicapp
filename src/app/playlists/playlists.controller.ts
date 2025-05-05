@@ -19,12 +19,11 @@ import { User } from '../../shared/entities/user.entity';
 import { CurrentUser } from '../../shared/decorators/current-user.decorator';
 import { IsValidUUIDPipe } from '../../shared/pipes/is-valid-uuid.pipe';
 import { UpdatePlayListDto } from './dto/create-playlist.dto';
-import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
+
 
 @ApiBearerAuth()
 @Controller('playlists')
 @ApiTags('Playlists')
-@UseInterceptors(CacheInterceptor) 
 export class PlayListsController {
   constructor(private playListService: PlayListsService) {}
 
@@ -37,15 +36,11 @@ export class PlayListsController {
   }
 
   @Get('')
-  @CacheKey('__key')
-  @CacheTTL(600) 
   public async getPlaylists(@CurrentUser() user: User) {
     return await this.playListService.getPlaylists(user);
   }
 
   @Get(':id')
-  @CacheKey('__key') 
-  @CacheTTL(600) 
   public async getPlaylist(
     @Param('id', IsValidUUIDPipe) id: string,
     @CurrentUser() user: User,
@@ -71,8 +66,6 @@ export class PlayListsController {
   }
 
   @Get('song/:id')
-  @CacheKey('__key') 
-  @CacheTTL(600) 
   public async getPlaylistSongs(
     @Param('id', IsValidUUIDPipe) playlistId: string,
     @CurrentUser() user: User,
