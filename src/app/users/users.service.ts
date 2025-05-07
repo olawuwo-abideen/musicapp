@@ -123,17 +123,17 @@ export class UsersService {
         throw new UnauthorizedException('Invalid user or 2FA not enabled');
       }
   
-      console.log('User secret:', user.twoFASecret);
-      console.log('Token:', token);
+      // console.log('User secret:', user.twoFASecret);
+      // console.log('Token:', token);
   
       const verified = speakeasy.totp.verify({
         secret: user.twoFASecret,
         token,
         encoding: 'base32',
-        window: 2, // Allows more time drift
+        window: 2, 
       });
   
-      console.log('Verified:', verified);
+      // console.log('Verified:', verified);
   
       if (verified) {
         return {

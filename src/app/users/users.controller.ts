@@ -6,7 +6,6 @@ import { User } from '../../shared/entities/user.entity';
 import { UsersService } from './users.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
-import { UpdateResult } from 'typeorm';
 import { Enable2FAType } from '../../shared/types/type';
 import {ValidateTokenDTO} from "./dto/validate-token.dto"
 
