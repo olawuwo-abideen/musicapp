@@ -93,24 +93,24 @@ export class UsersService {
     };
   }
   
-  async enable2FA(user: User): Promise<{ secret: string; message: string }> {
+  async enable2FA(user: User): Promise<{  message: string }> {
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
     if (user.enable2FA) {
       return {
         message: '2FA is already enabled for this user',
-        secret: user.twoFASecret,
+        // secret: user.twoFASecret,
       };
     }
     const secret = speakeasy.generateSecret();
     user.twoFASecret = secret.base32;
     user.enable2FA = true;
-    console.log(secret);
+    // console.log(secret);
     await this.userRepository.save(user);
     return {
       message: '2FA has been successfully enabled',
-      secret: user.twoFASecret,
+      // secret: user.twoFASecret,
     };
   }
   

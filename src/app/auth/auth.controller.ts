@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupDTO } from './dto/signup.dto';
 import { LoginDTO } from './dto/login.dto';
@@ -8,6 +8,8 @@ import {  Response } from 'express';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../../shared/decorators/current-user.decorator';
 import { User } from '../../shared/entities/user.entity';
+import { AuthGuard } from '@nestjs/passport';
+
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -43,6 +45,31 @@ export class AuthController {
   })
   async login(@Body() user: LoginDTO) {
     return this.authService.login(user);
+  }
+
+    @Get()
+  @UseGuards(AuthGuard('google'))
+  async googleAuth(@Req() req) {}
+
+  @Get('redirect')
+  @UseGuards(AuthGuard('google'))
+  googleAuthRedirect(@Req() req) {
+    return this.authService.googleLogin(req)
+  }
+  
+    @Post('verify')
+  async verifyTurnstile(@Body('token') token: string) {
+    if (!token) {
+      throw new BadRequestException('Missing Turnstile token');
+    }
+
+    const isValid = await this.authService.verifyToken(token);
+
+    if (!isValid) {
+      throw new BadRequestException('Invalid Turnstile token');
+    }
+
+    return { success: true, message: 'Turnstile token verified successfully' };
   }
 
   @Post('forgot-password')

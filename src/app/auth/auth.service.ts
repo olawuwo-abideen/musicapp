@@ -18,6 +18,7 @@ import { LoginDTO } from './dto/login.dto';
   import { ResetPasswordDto } from './dto/reset-password.dto';
   import { ConfigService } from '@nestjs/config';
   import * as bcryptjs from "bcryptjs"
+  import axios from "axios";
   
   @Injectable()
   export class AuthService {
@@ -81,6 +82,16 @@ import { LoginDTO } from './dto/login.dto';
   return this.jwtService.sign({ sub: user.id });
   }
   
+   async verifyToken(token: string): Promise<boolean> {
+   const secretKey = process.env.TURNSTILE_SECRET_KEY;
+   const response = await axios.post(
+     "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+     new URLSearchParams({ secret: secretKey, response: token }),
+     { headers: { "Content-Type": "application/x-www-form-urlencoded" } },
+   );
+   return response.data.success;
+ }
+
   async forgotPassword(email: string): Promise<any> {
   const user: User | null = await this.userService.findOne({ email });
   
@@ -163,5 +174,16 @@ import { LoginDTO } from './dto/login.dto';
   }
   
   
+
+    googleLogin(req) {
+    if (!req.user) {
+      return 'No user from google'
+    }
+
+    return {
+      message: 'User information from google',
+      user: req.user
+    }
+  }
   }
   
