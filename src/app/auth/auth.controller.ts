@@ -47,7 +47,7 @@ export class AuthController {
     return this.authService.login(user);
   }
 
-    @Get()
+    @Get('google/login')
   @UseGuards(AuthGuard('google'))
   async googleAuth(@Req() req) {}
 
