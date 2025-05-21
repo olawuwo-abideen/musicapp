@@ -26,16 +26,30 @@ throw new InternalServerErrorException('Error creating song');
 }
 }
 
+// public async updateSong(id: string, data: UpdateSongDto): Promise<{ message: string; song: Song }> {
+// const song = await this.songRepository.findOne({ where: { id } });
+// if (!song) {
+// throw new NotFoundException(`Song with ID ${id} not found`);
+// }
+
+// Object.assign(song, data);
+// const updatedSong = await this.songRepository.save(song);
+// return { message: 'Song updated successfully', song: updatedSong };
+// }
+
+
 public async updateSong(id: string, data: UpdateSongDto): Promise<{ message: string; song: Song }> {
-const song = await this.songRepository.findOne({ where: { id } });
-if (!song) {
-throw new NotFoundException(`Song with ID ${id} not found`);
+  const updateResult = await this.songRepository.update(id, data);
+  if (updateResult.affected === 0) {
+    throw new NotFoundException(`Song with ID ${id} not found`);
+  }
+
+  const updatedSong = await this.songRepository.findOne({ where: { id } });
+  return { message: 'Song updated successfully', song: updatedSong };
 }
 
-Object.assign(song, data);
-const updatedSong = await this.songRepository.save(song);
-return { message: 'Song updated successfully', song: updatedSong };
-}
+
+
 
 public async getSongs(): Promise<{ message: string; data: Song[] }> {
 const songs = await this.songRepository.find();

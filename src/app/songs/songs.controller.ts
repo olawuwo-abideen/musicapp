@@ -43,7 +43,6 @@ return await this.songsService.getSongs(
 );
 }
 
-
 @UseInterceptors(CacheInterceptor)
 @CacheKey('__key')
 @CacheTTL(60000)
