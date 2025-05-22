@@ -20,7 +20,7 @@ const songIds = new SharedArray('songs ids', function () {
 });
 
 export const options = {
-  vus: 3, // Maximum number of virtual users
+  vus: 50, // Maximum number of virtual users
   // duration: '25m', // Total duration of the test
 
   thresholds: {
@@ -30,12 +30,12 @@ export const options = {
 
   stages: [
     { duration: '1m', target: 100 }, // Ramp up to 100 users over 2 minutes
-    // { duration: '5m', target: 100 }, // Stay at 100 users for 5 minutes
-    // { duration: '2m', target: 200 }, // Ramp up to 200 users over 2 minutes
-    // { duration: '5m', target: 200 }, // Stay at 200 users for 5 minutes
-    // { duration: '2m', target: 300 }, // Ramp up to 300 users over 2 minutes
-    // { duration: '5m', target: 300 }, // Stay at 300 users for 5 minutes
-    // { duration: '2m', target: 0 }, // Ramp down to 0 users over 2 minutes
+    { duration: '5m', target: 100 }, // Stay at 100 users for 5 minutes
+    { duration: '2m', target: 200 }, // Ramp up to 200 users over 2 minutes
+    { duration: '5m', target: 200 }, // Stay at 200 users for 5 minutes
+    { duration: '2m', target: 300 }, // Ramp up to 300 users over 2 minutes
+    { duration: '5m', target: 300 }, // Stay at 300 users for 5 minutes
+    { duration: '2m', target: 0 }, // Ramp down to 0 users over 2 minutes
   ],
 };
 
@@ -63,7 +63,7 @@ export default function () {
     sleep(1);
   }
 
-  // PATCH update song (40% of requests to simulate many purchases)
+  // PATCH update song (40% of requests to simulate many updates)
 else {
   const songId = songIds[Math.floor(Math.random() * songIds.length)];
 
@@ -71,8 +71,8 @@ else {
     title: 'Updated Title',
     artists: 'Updated Artist',
     releasedDate: '2019-11-29T00:00:00.000Z',
-    duration: '00:03:22', // ✅ ISO string as fallback
-    genre: 'pop' // ✅ Make sure it matches your enum exactly
+    duration: '00:03:22', 
+    genre: 'pop' 
   });
 
   const response = http.put(`${BASE_URL}/song/${songId}`, payload, { headers });
