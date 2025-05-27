@@ -10,6 +10,7 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { redisStore } from 'cache-manager-redis-store';
 import { RedisClientOptions } from 'redis';
+import {ArtistsModule} from './artists/artists.module'
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { RedisClientOptions } from 'redis';
     PlayListModule,
     AuthModule,
     UsersModule,
+    ArtistsModule
   ],
   controllers: [],
   providers: [],

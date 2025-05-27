@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SongsController } from './songs.controller';
 import { SongsService } from './songs.service';
 import { CreateSongDTO, UpdateSongDto } from './dto/song-dto';
-import { CACHE_MANAGER } from '@nestjs/cache-manager'; // ✅ Correct import
+import { CACHE_MANAGER } from '@nestjs/cache-manager'; 
 import { Reflector } from '@nestjs/core';
 import { Genre } from '../../shared/entities/song.entity';
 import { User } from '../../shared/entities/user.entity';
@@ -30,8 +30,8 @@ describe('SongsController', () => {
       controllers: [SongsController],
       providers: [
         { provide: SongsService, useValue: mockService },
-        { provide: CACHE_MANAGER, useValue: {} }, // ✅ Mocked Cache
-        { provide: Reflector, useValue: { get: () => null } }, // ✅ Mocked Reflector
+        { provide: CACHE_MANAGER, useValue: {} }, 
+        { provide: Reflector, useValue: { get: () => null } }, 
       ],
     }).compile();
 
