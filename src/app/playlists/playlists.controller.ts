@@ -22,8 +22,8 @@ import { UpdatePlayListDto } from './dto/create-playlist.dto';
 
 
 @ApiBearerAuth()
-@Controller('playlists')
-@ApiTags('Playlists')
+@Controller('playlist')
+@ApiTags('Playlist')
 export class PlayListsController {
   constructor(private playListService: PlayListsService) {}
 

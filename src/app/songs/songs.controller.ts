@@ -93,6 +93,11 @@ public async deleteSong(
 return await this.songsService.deleteSong(id)
 }
 
+@Post('play/:id')
+async playSong(@Param('id', IsValidUUIDPipe) id: string) {
+  return this.songsService.incrementPlayCounter(id);
+}
+
 
 @Post('favorite/:id')
 async addToFavorites(

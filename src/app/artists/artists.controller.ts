@@ -19,16 +19,16 @@ import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 
 
 @ApiBearerAuth()
-@Controller('artists')
-@ApiTags('Artists')
+@Controller('artist')
+@ApiTags('Artist')
 export class ArtistsController {
-constructor(private songsService: ArtistsService) {}
+constructor(private artistService: ArtistsService) {}
 
 @Post('')
 public async createArtist(
 @Body() data: CreateArtistDTO,
 ) {
-return await this.songsService.createArtist(data)
+return await this.artistService.createArtist(data)
 }
 
 @UseInterceptors(CacheInterceptor)
@@ -37,7 +37,7 @@ return await this.songsService.createArtist(data)
 @Get('')
 public async getArtists(
 ) {
-return await this.songsService.getArtists(
+return await this.artistService.getArtists(
 );
 }
 
@@ -49,7 +49,7 @@ return await this.songsService.getArtists(
 public async getArtist(
 @Param('id', IsValidUUIDPipe) id: string,
 ) {
-return await this.songsService.getArtist(id)
+return await this.artistService.getArtist(id)
 
 }
 
@@ -58,7 +58,7 @@ public async updateArtist(
 @Param('id', IsValidUUIDPipe) id: string,
 @Body() data: UpdateArtistDTO,
 ) {
-return  await this.songsService.updateArtist(
+return  await this.artistService.updateArtist(
 id,
 data,
 )
@@ -72,7 +72,7 @@ data,
 public async searchArtistByName(
 @Query('query') searchQuery: string | null,
 ) {
-return await this.songsService.searchArtistByName(
+return await this.artistService.searchArtistByName(
 searchQuery,
 );
 }
@@ -81,8 +81,16 @@ searchQuery,
 public async deleteArtist(
 @Param('id', IsValidUUIDPipe) id: string,
 ) {
-return await this.songsService.deleteArtist(id)
+return await this.artistService.deleteArtist(id)
 }
+
+
+@Get('leaderboard')
+async getLeaderboard(@Query('limit') limit: number = 10) {
+  return this.artistService.getTopArtists(limit);
+}
+
+
 
 
 

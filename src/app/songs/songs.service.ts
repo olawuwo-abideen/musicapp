@@ -5,8 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 import { Favorite } from '../../shared/entities/favorite.entity';
 import { User } from '../../shared/entities/user.entity';
-import { Artists } from '../../shared/entities/artist.entity';
-
+import { Artist } from '../../shared/entities/artist.entity';
+import { Album } from 'src/shared/entities/album.entity';
 
 @Injectable()
 export class SongsService {
@@ -15,33 +15,44 @@ constructor(
 private songRepository: Repository<Song>,
 @InjectRepository(Favorite)
 private favoriteRepository: Repository<Favorite>,
-@InjectRepository(Artists)
-private artistRepository: Repository<Artists>,
+@InjectRepository(Artist)
+private artistRepository: Repository<Artist>,
+@InjectRepository(Album)
+private albumRepository: Repository<Album>,
 ) {}
 
 public async createSong(data: CreateSongDTO): Promise<{ message: string; song: Song }> {
-try {
-const artist = await this.artistRepository.findOneBy({ id: data.artistId });
+  try {
+    const artist = await this.artistRepository.findOneBy({ id: data.artistId });
+    if (!artist) {
+      throw new NotFoundException('Artist not found');
+    }
 
-if (!artist) {
-throw new NotFoundException('Artist not found');
+    const album = await this.albumRepository.findOneBy({ id: data.albumId });
+    if (!album) {
+      throw new NotFoundException('Album not found');
+    }
+
+    const song = this.songRepository.create({
+      title: data.title,
+      genre: data.genre,
+      releasedDate: data.releasedDate,
+      duration: data.duration,
+      language: data.language,
+      songUrl: data.songUrl,
+      songImageUrl: data.songImageUrl,
+      artist,
+      album, 
+    });
+
+    const savedSong = await this.songRepository.save(song);
+
+    return { message: 'Song created successfully', song: savedSong };
+  } catch (error) {
+    throw new InternalServerErrorException('Error creating song');
+  }
 }
 
-const song = this.songRepository.create({
-title: data.title,
-genre: data.genre,
-releasedDate: data.releasedDate,
-duration: data.duration,
-artist
-});
-
-const savedSong = await this.songRepository.save(song);
-
-return { message: 'Song created successfully', song: savedSong };
-} catch (error) {
-throw new InternalServerErrorException('Error creating song');
-}
-}
 
 
 // public async updateSong(id: string, data: UpdateSongDto): Promise<{ message: string; song: Song }> {
@@ -183,6 +194,31 @@ throw new NotFoundException('Song not found in favorite');
 await this.favoriteRepository.remove(favorite);
 
 return { message: 'Song removed from favorites successfully' };
+}
+
+
+async incrementPlayCounter(id: string) {
+  const song = await this.songRepository.findOne({
+    where: { id: id },
+    relations: ['artist', 'album'],
+  });
+
+  if (!song) throw new NotFoundException('Song not found');
+
+  await this.songRepository.increment({ id: id }, 'play_counter', 1);
+
+  await this.artistRepository.increment({ id: song.artist.id }, 'play_counter', 1);
+
+  if (song.album) {
+    await this.albumRepository.increment({ id: song.album.id }, 'play_counter', 1);
+  }
+
+  const updatedSong = await this.songRepository.findOne({ where: { id: id } });
+
+  return {
+    message: 'Song played',
+    playCount: updatedSong.playCounter,
+  };
 }
 
 

@@ -13,7 +13,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('playlists')
+@Entity('playlist')
 export class Playlist {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -13,7 +13,8 @@ UpdateDateColumn,
 import { User } from './user.entity';
 import { Exclude, instanceToPlain } from 'class-transformer';
 import { Favorite } from './favorite.entity';
-import { Artists } from './artist.entity';
+import { Artist } from './artist.entity';
+import { Album } from './album.entity';
 
 export enum Genre {
 POP = 'pop',
@@ -21,6 +22,16 @@ ROCK = 'rock',
 HIPHOP = 'hiphop',
 JAZZ = 'jazz',
 ELECTRONIC = 'electronic',
+}
+
+export enum SongLanguage {
+ENGLISH = 'english',
+SPANISH = 'spanish',
+FRENCH = 'french',
+HINDI = 'hindi',
+CHINESE = 'chinese',
+JAPANESE = 'japanese',
+OTHER = 'OTHER',
 }
 
 @Entity('songs')
@@ -47,6 +58,30 @@ duration: Date;
 @Column('text')
 genre: Genre;
 
+@Column({nullable: true})
+songUrl: string;
+
+@Column({nullable: true})
+songImageUrl: string;
+
+@Column({ default: 0 })
+playCounter: number;
+
+@Column({nullable: true})
+@Exclude()
+albumId: string;
+
+@Column({nullable: true})
+@Exclude()
+artistId: string;
+
+@Column({
+type: 'enum',
+enum: SongLanguage,
+default: SongLanguage.ENGLISH,
+})
+language: SongLanguage;
+
 @ManyToOne(() => User, (user) => user.songs)
 user: User;
 
@@ -57,10 +92,12 @@ playList: Playlist;
 @OneToMany(() => Favorite, (favorite) => favorite.song)
 favorites: Favorite[];
 
-@ManyToOne(() => Artists, artist => artist.songs)
+@ManyToOne(() => Artist, artist => artist.songs)
 @JoinColumn({ name: 'artistId' })
-artist: Artists;
+artist: Artist;
 
+@ManyToOne(() => Album, album => album.songs)
+album: Album; 
 
 
 @CreateDateColumn({

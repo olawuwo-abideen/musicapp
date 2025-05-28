@@ -47,6 +47,7 @@ import { LoginDTO } from './dto/login.dto';
   let user: User = this.userRepository.create({
   firstName: data.firstName,
   lastName: data.lastName,
+  dob: data.dob,
   email: data.email,
   password: password,
   });
@@ -59,24 +60,29 @@ import { LoginDTO } from './dto/login.dto';
   }
   }
 
-  public async login({ email, password }: LoginDTO) {
-    const user: User | null = await this.userService.findOne({ email });
-  
-    if (!user) {
-      throw new UnauthorizedException('User not found');
-    }
-  
-    const isPasswordValid = await bcryptjs.compare(password, user.password);
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-  
-    return {
-      message: "User login successfully",
-      token: this.createAccessToken(user),
-      user,
-    };
+public async login({ email, password }: LoginDTO) {
+  const user = await this.userService.findOne({ email });
+
+  if (!user) {
+    throw new UnauthorizedException('User not found');
   }
+
+  const isPasswordValid = await bcryptjs.compare(password, user.password);
+  if (!isPasswordValid) {
+    throw new UnauthorizedException('Invalid credentials');
+  }
+
+  await this.userService.update({ id: user.id }, { lastLogin: new Date() });
+
+  const updatedUser = await this.userService.findOne({ email }); // re-fetch the updated user
+
+  return {
+    message: "User login successfully",
+    token: this.createAccessToken(updatedUser),
+    user: updatedUser,
+  };
+}
+
 
   public createAccessToken(user: User): string {
   return this.jwtService.sign({ sub: user.id });

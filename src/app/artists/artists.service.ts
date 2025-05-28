@@ -2,17 +2,17 @@ import { Injectable, NotFoundException, InternalServerErrorException } from '@ne
 import { CreateArtistDTO, UpdateArtistDTO } from './dto/artist-dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
-import { Artists } from '../../shared/entities/artist.entity';
+import { Artist } from '../../shared/entities/artist.entity';
 
 
 @Injectable()
 export class ArtistsService {
 constructor(
-@InjectRepository(Artists)
-private artistRepository: Repository<Artists>,
+@InjectRepository(Artist)
+private artistRepository: Repository<Artist>,
 ) {}
 
-public async createArtist(data: CreateArtistDTO): Promise<{ message: string; artist: Artists }> {
+public async createArtist(data: CreateArtistDTO): Promise<{ message: string; artist: Artist }> {
 try {
 const artist = this.artistRepository.create(data);
 const savedArtist = await this.artistRepository.save(artist);
@@ -23,14 +23,14 @@ throw new InternalServerErrorException('Error creating song');
 }
 
 
-public async getArtists(): Promise<{ message: string; data: Artists[] }> {
+public async getArtists(): Promise<{ message: string; data: Artist[] }> {
 const artists = await this.artistRepository.find();
 return { message: 'Artists retrieved successfully', data: artists };
 
 }
 
 
-public async getArtist(id: string): Promise<{ message: string; artists: Artists }> {
+public async getArtist(id: string): Promise<{ message: string; artists: Artist }> {
 const artists = await this.artistRepository.findOne({ where: { id } });
 
 if (!artists) {
@@ -41,7 +41,7 @@ return { message: 'Artist retrieved successfully', artists };
 }
 
 
-public async updateArtist(id: string, data: UpdateArtistDTO): Promise<{ message: string; artist: Artists }> {
+public async updateArtist(id: string, data: UpdateArtistDTO): Promise<{ message: string; artist: Artist }> {
   const updateResult = await this.artistRepository.update(id, data);
   if (updateResult.affected === 0) {
     throw new NotFoundException(`Artist with ID ${id} not found`);
@@ -51,8 +51,8 @@ public async updateArtist(id: string, data: UpdateArtistDTO): Promise<{ message:
   return { message: 'Artist updated successfully', artist: updatedArtist };
 }
 
-public async searchArtistByName(searchQuery: string | null): Promise<{ message: string; data: Artists[] }> {
-  let artists: Artists[];
+public async searchArtistByName(searchQuery: string | null): Promise<{ message: string; data: Artist[] }> {
+  let artists: Artist[];
 
   if (!searchQuery) {
     const response = await this.getArtists(); 
@@ -79,5 +79,23 @@ throw new NotFoundException(`Artist with ID ${id} not found`);
 await this.artistRepository.delete(id);
 return { message: 'Artist deleted successfully' };
 }
+
+
+async getTopArtists(limit: number = 10): Promise<{ message: string; data: Artist[] }> {
+  const topArtists = await this.artistRepository.find({
+    order: { playCounter: 'DESC' },
+    take: limit,
+  });
+
+  return {
+    message: 'Top artists by total song plays',
+    data: topArtists,
+  };
+}
+
+
+
+
+
 
 }

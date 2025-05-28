@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import { IsDateString, IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 import { PasswordMatch } from '../../../shared/validations/password-validation.dto';
 
 export class SignupDTO {
@@ -21,6 +21,14 @@ example: 'Doe',
 @IsString()
 @IsNotEmpty()
 lastName: string;
+
+@ApiProperty({
+required: true,
+description: 'The date of birth of the user in YYYY-MM-DD format',
+example: '1990-01-01',
+})
+@IsDateString()
+dob: string;
 
 @ApiProperty({
 required: true,

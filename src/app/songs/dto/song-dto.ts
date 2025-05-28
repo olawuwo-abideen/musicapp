@@ -2,9 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
 IsDateString,
 IsNotEmpty,
+IsOptional,
 IsString,
 } from 'class-validator';
-import { Genre } from '../../../shared/entities/song.entity';
+import { Genre, SongLanguage } from '../../../shared/entities/song.entity';
 
 export class CreateSongDTO {
 
@@ -20,6 +21,10 @@ title : string;
 @ApiProperty({ required: true, description: 'Artist ID' })
 @IsNotEmpty()
 artistId: string;
+
+@ApiProperty({ required: true, description: 'Album ID' })
+@IsOptional()
+albumId: string;
 
 @ApiProperty({
 required: true,
@@ -55,6 +60,36 @@ example: 'pop',
 @IsString()
 @IsNotEmpty()
 genre: Genre;
+
+@ApiProperty({
+required: true,
+description: 'The song language',
+example: 'english',
+})
+@IsString()
+@IsNotEmpty()
+language: SongLanguage;
+
+
+@ApiProperty({
+required: true,
+description: 'The song url',
+example: 'songUrl ',
+})
+@IsString()
+@IsNotEmpty()
+songUrl: string;
+
+
+@ApiProperty({
+required: true,
+description: 'The song image url',
+example: 'songImageUrl'
+})
+@IsString()
+@IsNotEmpty()
+songImageUrl: string;
+
 }
 
 export class UpdateSongDto {
@@ -72,6 +107,10 @@ title : string;
 @IsNotEmpty()
 artistId: string;
 
+@ApiProperty({ required: true, description: 'Album ID' })
+@IsOptional()
+albumId: string;
+
 @ApiProperty({
 required: true,
 description: 'The song artists',
@@ -106,4 +145,32 @@ example: 'pop',
 @IsString()
 @IsNotEmpty()
 genre: Genre;
+
+@ApiProperty({
+required: true,
+description: 'The song language',
+example: 'english',
+})
+@IsString()
+@IsNotEmpty()
+language: SongLanguage;
+
+@ApiProperty({
+required: true,
+description: 'The song url',
+example: 'songUrl ',
+})
+@IsString()
+@IsNotEmpty()
+songUrl: string;
+
+
+@ApiProperty({
+required: true,
+description: 'The song image url',
+example: 'songImageUrl'
+})
+@IsString()
+@IsNotEmpty()
+songImageUrl: string;
 }

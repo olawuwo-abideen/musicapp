@@ -4,61 +4,67 @@ import { Favorite } from './favorite.entity';
 import { Playlist } from '../../shared/entities/playlist.entity';
 import { Song } from './song.entity';
 
-@Entity('users')
+@Entity('user')
 export class User {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+@PrimaryGeneratedColumn('uuid')
+id: string;
 
-  @Column()
-  firstName: string;
+@Column()
+firstName: string;
 
-  @Column()
-  lastName: string;
+@Column()
+lastName: string;
 
-  @Column({ unique: true })
-  email: string;
+@Column({ unique: true })
+email: string;
 
-  @Column()
-  @Exclude()
-  password: string;
+@Column()
+@Exclude()
+password: string;
 
-  @Column({ type: 'varchar', name: 'reset_token', nullable: true })
-  @Exclude()
-  resetToken: string | null;
+@Column({ type: 'date', nullable: true }) 
+dob?: Date;
 
-  @Column({ nullable: true, type: 'text' })
-  @Exclude()
-  twoFASecret: string;
+@Column({ type: 'varchar', name: 'reset_token', nullable: true })
+@Exclude()
+resetToken: string | null;
 
-  @Column({ default: false, type: 'boolean' })
-  @Exclude()
-  enable2FA: boolean;
+@Column({ nullable: true, type: 'text' })
+@Exclude()
+twoFASecret: string;
 
-  @Column({ nullable: true })
-  @Exclude()
-  apiKey: string;
+@Column({ default: false, type: 'boolean' })
+@Exclude()
+enable2FA: boolean;
 
-  @OneToMany(() => Playlist, (playlist) => playlist.user)
-  playlists: Playlist[];
-  
+@Column({ nullable: true })
+@Exclude()
+apiKey: string;
 
-  @OneToMany(() => Song, (song) => song.user)
-  songs: Song[];
+@OneToMany(() => Playlist, (playlist) => playlist.user)
+playlists: Playlist[];
 
-  @OneToMany(() => Favorite, (favorite) => favorite.user)
-  favorites: Favorite[];
 
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+@OneToMany(() => Song, (song) => song.user)
+songs: Song[];
 
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+@OneToMany(() => Favorite, (favorite) => favorite.user)
+favorites: Favorite[];
 
-  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
-  @Exclude()
-  deletedAt: Date;
+@Column({ type: 'timestamp', nullable: true })
+lastLogin?: Date;
 
-  toJSON(): Record<string, any> {
-    return instanceToPlain(this);
-  }
+@CreateDateColumn({ name: 'created_at' })
+createdAt: Date;
+
+@UpdateDateColumn({ name: 'updated_at' })
+updatedAt: Date;
+
+@DeleteDateColumn({ name: 'deleted_at', nullable: true })
+@Exclude()
+deletedAt: Date;
+
+toJSON(): Record<string, any> {
+return instanceToPlain(this);
+}
 }
