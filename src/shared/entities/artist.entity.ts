@@ -19,7 +19,6 @@ country: string;
 artistGenre: string;
 
 @Column()
-@Exclude()
 imageUrl: string;
 
 @Column({ default: 0 })

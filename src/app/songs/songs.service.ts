@@ -7,6 +7,7 @@ import { Favorite } from '../../shared/entities/favorite.entity';
 import { User } from '../../shared/entities/user.entity';
 import { Artist } from '../../shared/entities/artist.entity';
 import { Album } from 'src/shared/entities/album.entity';
+import { PaginationDto } from 'src/shared/dtos/pagination.dto';
 
 @Injectable()
 export class SongsService {
@@ -22,38 +23,32 @@ private albumRepository: Repository<Album>,
 ) {}
 
 public async createSong(data: CreateSongDTO): Promise<{ message: string; song: Song }> {
-  try {
-    const artist = await this.artistRepository.findOneBy({ id: data.artistId });
-    if (!artist) {
-      throw new NotFoundException('Artist not found');
-    }
-
-    const album = await this.albumRepository.findOneBy({ id: data.albumId });
-    if (!album) {
-      throw new NotFoundException('Album not found');
-    }
-
-    const song = this.songRepository.create({
-      title: data.title,
-      genre: data.genre,
-      releasedDate: data.releasedDate,
-      duration: data.duration,
-      language: data.language,
-      songUrl: data.songUrl,
-      songImageUrl: data.songImageUrl,
-      artist,
-      album, 
-    });
-
-    const savedSong = await this.songRepository.save(song);
-
-    return { message: 'Song created successfully', song: savedSong };
-  } catch (error) {
-    throw new InternalServerErrorException('Error creating song');
+  const artist = await this.artistRepository.findOneBy({ id: data.artistId });
+  if (!artist) {
+    throw new NotFoundException('Artist not found');
   }
+
+  const album = await this.albumRepository.findOneBy({ id: data.albumId });
+  if (!album) {
+    throw new NotFoundException('Album not found');
+  }
+
+  const song = this.songRepository.create({
+    title: data.title,
+    genre: data.genre,
+    releasedDate: data.releasedDate,
+    duration: data.duration,
+    language: data.language,
+    songUrl: data.songUrl,
+    songImageUrl: data.songImageUrl,
+    artist,
+    album, 
+  });
+
+  const savedSong = await this.songRepository.save(song);
+
+  return { message: 'Song created successfully', song: savedSong };
 }
-
-
 
 // public async updateSong(id: string, data: UpdateSongDto): Promise<{ message: string; song: Song }> {
 // const song = await this.songRepository.findOne({ where: { id } });
@@ -80,10 +75,15 @@ return { message: 'Song updated successfully', song: updatedSong };
 
 
 
-public async getSongs(): Promise<{ message: string; data: Song[] }> {
-const songs = await this.songRepository.find();
-return { message: 'Songs retrieved successfully', data: songs };
+public async getSongs(pagination: PaginationDto): Promise<{ message: string; data: Song[] }> {
+  const { page = 1, pageSize = 10 } = pagination;
 
+  const [data] = await this.songRepository.findAndCount({
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+  });
+
+  return { message: 'Songs retrieved successfully', data };
 }
 
 
@@ -98,21 +98,25 @@ return { message: 'Song retrieved successfully', song };
 }
 
 
-public async searchSongs(searchQuery: string | null): Promise<{ message: string; data: Song[] }> {
-let songs: Song[];
+public async searchSongs(searchQuery: string | null, pagination: PaginationDto): Promise<{ message: string; data: Song[] }> {
+  const { page = 1, pageSize = 10 } = pagination;
+  let songs: Song[];
 
-if (!searchQuery) {
-songs = await this.getSongs().then(response => response.data);
-} else {
-songs = await this.songRepository.find({
-where: {
-title: Like(`%${searchQuery}%`), 
-},
-});
+  if (!searchQuery) {
+    songs = (await this.getSongs(pagination)).data;
+  } else {
+    songs = await this.songRepository.find({
+      where: {
+        title: Like(`%${searchQuery}%`),
+      },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    });
+  }
+
+  return { message: 'Songs retrieved successfully', data: songs };
 }
 
-return { message: 'Songs retrieved successfully', data: songs };
-}
 
 public async deleteSong(id: string): Promise<{ message: string }> {
 const song = await this.songRepository.findOne({ where: { id } });
@@ -125,20 +129,24 @@ return { message: 'Song deleted successfully' };
 }
 
 
-async getFavorites(user: User): Promise<{ message: string; favorites?: Favorite[] }> {
-const favorites = await this.favoriteRepository.find({
-where: { user: { id: user.id } },
-relations: ['song'],
-});
+async getFavorites(user: User, pagination: PaginationDto): Promise<{ message: string; favorites?: Favorite[] }> {
+  const { page = 1, pageSize = 10 } = pagination;
 
-if (!favorites.length) {
-return { message: 'No favorite songs found' };
-}
+  const [favorites, total] = await this.favoriteRepository.findAndCount({
+    where: { user: { id: user.id } },
+    relations: ['song'],
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+  });
 
-return {
-message: 'Favorite songs retrieved successfully',
-favorites,
-};
+  if (!favorites.length) {
+    return { message: 'No favorite songs found' };
+  }
+
+  return {
+    message: 'Favorite songs retrieved successfully',
+    favorites,
+  };
 }
 
 
@@ -205,12 +213,12 @@ async incrementPlayCounter(id: string) {
 
   if (!song) throw new NotFoundException('Song not found');
 
-  await this.songRepository.increment({ id: id }, 'play_counter', 1);
+  await this.songRepository.increment({ id: id }, 'playCounter', 1);
 
-  await this.artistRepository.increment({ id: song.artist.id }, 'play_counter', 1);
+  await this.artistRepository.increment({ id: song.artist.id }, 'playCounter', 1);
 
   if (song.album) {
-    await this.albumRepository.increment({ id: song.album.id }, 'play_counter', 1);
+    await this.albumRepository.increment({ id: song.album.id }, 'playCounter', 1);
   }
 
   const updatedSong = await this.songRepository.findOne({ where: { id: id } });

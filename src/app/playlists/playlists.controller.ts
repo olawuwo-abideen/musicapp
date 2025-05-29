@@ -5,8 +5,7 @@ import {
   Get,
   Param,
   Post,
-  Put,
-  UseInterceptors,
+  Put
 } from '@nestjs/common';
 import {
   CreatePlayListDto,
@@ -14,7 +13,7 @@ import {
   RemoveSongToPlayListDto,
 } from './dto/create-playlist.dto';
 import { PlayListsService } from './playlists.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '../../shared/entities/user.entity';
 import { CurrentUser } from '../../shared/decorators/current-user.decorator';
 import { IsValidUUIDPipe } from '../../shared/pipes/is-valid-uuid.pipe';
@@ -28,6 +27,7 @@ export class PlayListsController {
   constructor(private playListService: PlayListsService) {}
 
   @Post('')
+  @ApiOperation({ summary: 'Create playlist' })
   public async createPlaylist(
     @Body() payload: CreatePlayListDto,
     @CurrentUser() user: User,
@@ -36,11 +36,13 @@ export class PlayListsController {
   }
 
   @Get('')
+  @ApiOperation({ summary: 'Get playlists' })
   public async getPlaylists(@CurrentUser() user: User) {
     return await this.playListService.getPlaylists(user);
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get a playlist' })
   public async getPlaylist(
     @Param('id', IsValidUUIDPipe) id: string,
     @CurrentUser() user: User,
@@ -49,6 +51,7 @@ export class PlayListsController {
   }
 
   @Put(':id')
+  @ApiOperation({ summary: 'Update a playlist' })
   public async updatePlaylist(
     @Param('id', IsValidUUIDPipe) id: string,
     @Body() payload: UpdatePlayListDto,
@@ -58,6 +61,7 @@ export class PlayListsController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete a playlist' })
   public async deletePlaylist(
     @Param('id', IsValidUUIDPipe) id: string,
     @CurrentUser() user: User,
@@ -66,6 +70,7 @@ export class PlayListsController {
   }
 
   @Get('song/:id')
+  @ApiOperation({ summary: 'Get playlist song' })
   public async getPlaylistSongs(
     @Param('id', IsValidUUIDPipe) playlistId: string,
     @CurrentUser() user: User,
@@ -74,6 +79,7 @@ export class PlayListsController {
   }
 
   @Post('song/:id')
+  @ApiOperation({ summary: 'Add a song to playlist' })
   public async AddSongToPlayList(
     @Body() payload: AddSongToPlayListDto,
     @Param('id', IsValidUUIDPipe) id: string,
@@ -83,6 +89,7 @@ export class PlayListsController {
   }
 
   @Delete('song/:id')
+  @ApiOperation({ summary: 'Remove song from playlist' })
   public async removeSongFromPlaylist(
     @Body() payload: RemoveSongToPlayListDto,
     @Param('id', IsValidUUIDPipe) id: string,

@@ -71,15 +71,15 @@ The following API endpoints are available:
 
 **Songs**
 
-- **POST /songs**: Create a songs.
-- **GET /songs**: Get all songs.
-- **GET /songs/:id**: Get a song.
-- **PUT /songs/:id**: Update a song.
-- **DELETE /songs/:id**: Remove a song.
+- **POST /song**: Create a songs.
+- **GET /song**: Get all songs.
+- **GET /song/:id**: Get a song.
+- **PUT /song/:id**: Update a song.
+- **DELETE /song/:id**: Remove a song.
 - **GET /search?query** – Search for songs
-- **GET /favorites** – Fetch the user's favorite songs  
-- **POST /favorites/{songId}** – Add a song to favorites  
-- **DELETE /favorites/{songId}** – Remove a song from favorites  
+- **GET song/favorites** – Fetch the user's favorite songs  
+- **POST song/favorites/{songId}** – Add a song to favorites  
+- **DELETE song/favorites/{songId}** – Remove a song from favorites  
 
 **Playlists**
 
@@ -91,3 +91,26 @@ The following API endpoints are available:
 - **DELETE /playlists/song/{playlistId}** – Delete a playlist  
 - **POST /playlists/song/{playlistId}** – Add a song to a playlist  
 - **DELETE /playlists/song/{playlistId}** – Remove a song from a playlist  
+
+
+**Artist**
+
+- **GET /artist** – Fetch all artists 
+- **POST /artist** – Create an artist  
+- **GET artist/search/query** – Search artist
+- **GET /artist/{artistId}** – Get artist 
+- **PUT /artist/{artistId}** – Update artist 
+- **DELETE /artist/{artistId}** – Delete artist  
+- **GET /artist/leaderboard** – Get top artist
+
+
+**Album**
+
+- **GET /album** – Fetch album
+- **POST /album** – Create an album 
+- **GET /album/{albumId}** – Get an album
+- **DELETE /album/{albumId}** – Delete an album 
+- **PUT /album/{albumId}** – Update an album  
+- **GET album/search/query** – Search album
+- **POST /album/{songId}/{albumId}** – Add song to album
+- **POST /album/{songId}** – Remove song from album

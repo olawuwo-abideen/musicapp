@@ -11,9 +11,10 @@ UseInterceptors
 } from '@nestjs/common';
 import { AlbumsService } from './albums.service';
 import { CreateAlbumDTO, UpdateAlbumDTO } from './dto/albums-dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { IsValidUUIDPipe } from '../../shared/pipes/is-valid-uuid.pipe';
 import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
+import { PaginationDto } from 'src/shared/dtos/pagination.dto';
 
 
 
@@ -24,6 +25,7 @@ export class AlbumsController {
 constructor(private albumsService: AlbumsService) {}
 
 @Post('')
+@ApiOperation({ summary: 'Create album' })
 public async createAlbum(
 @Body() data: CreateAlbumDTO,
 ) {
@@ -34,13 +36,30 @@ return await this.albumsService.createAlbum(data)
 @CacheKey('__key')
 @CacheTTL(60000)
 @Get('')
-public async getAlbums(
+@ApiOperation({ summary: 'Get album' })
+@ApiQuery({ name: 'page', required: false, example: 1 })
+@ApiQuery({ name: 'pageSize', required: false, example: 10 })
+public async getAlbums(@Query() paginationDto: PaginationDto) {
+  return await this.albumsService.getAlbums(paginationDto);
+}
+
+@UseInterceptors(CacheInterceptor)
+@CacheKey('__key')
+@CacheTTL(60000)
+@Get('search')
+@ApiOperation({ summary: 'Search album' })
+@ApiQuery({ name: 'query', required: false, example: 'Pop' })
+@ApiQuery({ name: 'page', required: false, example: 1 })
+@ApiQuery({ name: 'pageSize', required: false, example: 10 })
+public async searchAlbums(
+  @Query('query') searchQuery: string | null,
+  @Query() pagination: PaginationDto,
 ) {
-return await this.albumsService.getAlbums(
-);
+  return await this.albumsService.searchAlbums(searchQuery, pagination);
 }
 
 @Put(':id')
+@ApiOperation({ summary: 'Update album' })
 public async updateAlbum(
 @Param('id', IsValidUUIDPipe) id: string,
 @Body() data: UpdateAlbumDTO,
@@ -52,6 +71,7 @@ data,
 }
 
 @Delete(':id')
+@ApiOperation({ summary: 'Delete album' })
 public async deleteAlbum(
 @Param('id', IsValidUUIDPipe) id: string,
 ) {
@@ -62,6 +82,7 @@ return await this.albumsService.deleteAlbum(id)
 @CacheKey('__key')
 @CacheTTL(60000)
 @Get(':id')
+@ApiOperation({ summary: 'Get an album' })
 public async getAlbum(
 @Param('id', IsValidUUIDPipe) id: string,
 ) {
@@ -69,20 +90,9 @@ return await this.albumsService.getAlbum(id)
 
 }
 
-@UseInterceptors(CacheInterceptor)
-@CacheKey('__key')
-@CacheTTL(60000)
-@Get('search')
-public async searchAlbums(
-@Query('query') searchQuery: string | null,
-) {
-return await this.albumsService.searchAlbums(
-searchQuery,
-);
-}
 
-
-@Post(':songId/album/:albumId')
+@Post(':songId/:albumId')
+@ApiOperation({ summary: 'Add song album' })
 async addToAlbum(
 @Param('songId') songId: string,
 @Param('albumId') albumId: string,
@@ -92,7 +102,8 @@ return await this.albumsService.addSongToAlbum(songId, albumId);
 
 
 
-@Delete('song/:id')
+@Delete(':songId')
+@ApiOperation({ summary: 'Remove song from album' })
 async removeFromFavorites(
 @Param('id', IsValidUUIDPipe) id: string,
 ) {

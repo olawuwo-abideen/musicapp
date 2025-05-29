@@ -3,47 +3,48 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmConfigService } from '../shared/services/typeorm/typeorm-config.service';
+import { AuthModule } from './auth/auth.module';
+import {ArtistsModule} from './artists/artists.module'
+import {AlbumsModule} from './albums/albums.module'
 import { SongsModule } from './songs/songs.module';
 import { PlayListModule } from './playlists/playlists.module';
-import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { redisStore } from 'cache-manager-redis-store';
 import { RedisClientOptions } from 'redis';
-import {ArtistsModule} from './artists/artists.module'
-import {AlbumsModule} from './albums/albums.module'
+
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
-    ThrottlerModule.forRoot([
-      {
-        ttl: 60000,
-        limit: 10,
-      },
-    ]),
-    TypeOrmModule.forRootAsync({
-      useClass: TypeOrmConfigService,
-    }),
-    CacheModule.registerAsync<RedisClientOptions>({
-      isGlobal: true, 
-      useFactory: async () => ({
-        store: await redisStore({
-          socket: { host: 'localhost', port: 6379 },
-        }),
-        ttl: 600, 
-      }),
-    }),
-    SongsModule,
-    PlayListModule,
-    AuthModule,
-    UsersModule,
-    ArtistsModule,
-    AlbumsModule
-  ],
-  controllers: [],
-  providers: [],
+imports: [
+ConfigModule.forRoot({
+isGlobal: true,
+}),
+ThrottlerModule.forRoot([
+{
+ttl: 60000,
+limit: 10,
+},
+]),
+TypeOrmModule.forRootAsync({
+useClass: TypeOrmConfigService,
+}),
+CacheModule.registerAsync<RedisClientOptions>({
+isGlobal: true, 
+useFactory: async () => ({
+store: await redisStore({
+socket: { host: 'localhost', port: 6379 },
+}),
+ttl: 600, 
+}),
+}),
+AuthModule,
+ArtistsModule,
+AlbumsModule,
+SongsModule,
+PlayListModule,
+UsersModule
+],
+controllers: [],
+providers: [],
 })
 export class AppModule {}

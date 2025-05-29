@@ -26,13 +26,6 @@ artistId: string;
 @IsOptional()
 albumId: string;
 
-@ApiProperty({
-required: true,
-description: 'The song artists',
-example: 'The weekend',
-})
-@IsNotEmpty()
-artists: string;
 
 @ApiProperty({
 required: true,
@@ -111,13 +104,6 @@ artistId: string;
 @IsOptional()
 albumId: string;
 
-@ApiProperty({
-required: true,
-description: 'The song artists',
-example: 'The weekend',
-})
-@IsNotEmpty()
-artists: string;
 
 @ApiProperty({
 required: true,

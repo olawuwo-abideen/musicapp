@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 import { Artist } from '../../shared/entities/artist.entity';
 import { Album } from 'src/shared/entities/album.entity';
+import { PaginationDto } from 'src/shared/dtos/pagination.dto';
 
 
 @Injectable()
@@ -19,29 +20,35 @@ private albumRepository: Repository<Album>,
 ) {}
 
 public async createAlbum(data: CreateAlbumDTO): Promise<{ message: string; album: Album }> {
-try {
-const artist = await this.artistRepository.findOneBy({ id: data.artistId });
+  const artist = await this.artistRepository.findOneBy({ id: data.artistId });
 
-if (!artist) {
-throw new NotFoundException('Artist not found');
-}
-const album = this.albumRepository.create({
-title: data.title,
-releaseDate: data.releaseDate,
-coverImageUrl: data.coverImageUrl,
-artist
-});
-const savedAlbum = await this.artistRepository.save(album);
-return { message: 'Album created successfully', album: savedAlbum };
-} catch (error) {
-throw new InternalServerErrorException('Error creating album');
-}
+  if (!artist) {
+    throw new NotFoundException('Artist not found');
+  }
+
+  const album = this.albumRepository.create({
+    title: data.title,
+    releaseDate: data.releaseDate,
+    coverImageUrl: data.coverImageUrl,
+    artist
+  });
+
+  const savedAlbum = await this.albumRepository.save(album);
+
+  return { message: 'Album created successfully', album: savedAlbum };
 }
 
 
-public async getAlbums(): Promise<{ message: string; data: Album[] }> {
-const albums = await this.albumRepository.find();
-return { message: 'Albums retrieved successfully', data: albums };
+
+public async getAlbums(pagination: PaginationDto): Promise<{ message: string; data: Album[] }> {
+  const { page = 1, pageSize = 10 } = pagination;
+
+  const [data] = await this.albumRepository.findAndCount({
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+  });
+
+  return { message: 'Albums retrieved successfully', data };
 }
 
 
@@ -77,21 +84,24 @@ return { message: 'Album retrieved successfully', album };
 }
 
 
-public async searchAlbums(searchQuery: string | null): Promise<{ message: string; data: Album[] }> {
-let albums: Album[];
+public async searchAlbums(searchQuery: string | null, pagination: PaginationDto): Promise<{ message: string; data: Album[] }> {
+  let albums: Album[];
 
-if (!searchQuery) {
-albums = await this.getAlbums().then(response => response.data);
-} else {
-albums = await this.albumRepository.find({
-where: {
-title: Like(`%${searchQuery}%`), 
-},
-});
+  if (!searchQuery) {
+    albums = await this.getAlbums(pagination).then(res => res.data);
+  } else {
+    albums = await this.albumRepository.find({
+      where: {
+        title: Like(`%${searchQuery}%`),
+      },
+      skip: (pagination.page - 1) * pagination.pageSize,
+      take: pagination.pageSize,
+    });
+  }
+
+  return { message: 'Albums retrieved successfully', data: albums };
 }
 
-return { message: 'Albums retrieved successfully', data: albums };
-}
 
 
 async addSongToAlbum(songId: string, albumId: string): Promise<{ message: string; song?: Song }> {

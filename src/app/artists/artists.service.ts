@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { CreateArtistDTO, UpdateArtistDTO } from './dto/artist-dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
+import { Repository, Like, ILike } from 'typeorm';
 import { Artist } from '../../shared/entities/artist.entity';
+import { PaginationDto } from 'src/shared/dtos/pagination.dto';
 
 
 @Injectable()
@@ -13,20 +14,22 @@ private artistRepository: Repository<Artist>,
 ) {}
 
 public async createArtist(data: CreateArtistDTO): Promise<{ message: string; artist: Artist }> {
-try {
-const artist = this.artistRepository.create(data);
-const savedArtist = await this.artistRepository.save(artist);
-return { message: 'Artist created successfully', artist: savedArtist };
-} catch (error) {
-throw new InternalServerErrorException('Error creating song');
-}
+  const artist = this.artistRepository.create(data);
+  const savedArtist = await this.artistRepository.save(artist);
+  return { message: 'Artist created successfully', artist: savedArtist };
 }
 
 
-public async getArtists(): Promise<{ message: string; data: Artist[] }> {
-const artists = await this.artistRepository.find();
-return { message: 'Artists retrieved successfully', data: artists };
 
+public async getArtists(pagination: PaginationDto): Promise<{ message: string; data: Artist[] }> {
+  const { page = 1, pageSize = 10 } = pagination;
+
+  const [data] = await this.artistRepository.findAndCount({
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+  });
+
+  return { message: 'Artists retrieved successfully', data };
 }
 
 
@@ -51,23 +54,25 @@ public async updateArtist(id: string, data: UpdateArtistDTO): Promise<{ message:
   return { message: 'Artist updated successfully', artist: updatedArtist };
 }
 
-public async searchArtistByName(searchQuery: string | null): Promise<{ message: string; data: Artist[] }> {
+public async searchArtistByName(searchQuery: string | null, pagination: PaginationDto): Promise<{ message: string; data: Artist[] }> {
+  const { page = 1, pageSize = 10 } = pagination;
   let artists: Artist[];
 
   if (!searchQuery) {
-    const response = await this.getArtists(); 
+    const response = await this.getArtists(pagination); 
     artists = response.data;
   } else {
     artists = await this.artistRepository.find({
       where: {
-        artistName: Like(`%${searchQuery}%`),
+        artistName: ILike(`%${searchQuery}%`),
       },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
     });
   }
 
   return { message: 'Artists retrieved successfully', data: artists };
 }
-
 
 
 public async deleteArtist(id: string): Promise<{ message: string }> {

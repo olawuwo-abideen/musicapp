@@ -46,8 +46,6 @@ playListId: string;
 @Column()
 title: string;
 
-@Column()
-artists: string;
 
 @Column('date')
 releasedDate: Date;
