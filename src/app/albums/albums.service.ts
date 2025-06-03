@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, InternalServerErrorException, BadRequest
 import { CreateAlbumDTO, UpdateAlbumDTO } from './dto/albums-dto';
 import { Song } from '../../shared/entities/song.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
+import { Repository, Like, ILike } from 'typeorm';
 import { Artist } from '../../shared/entities/artist.entity';
 import { Album } from 'src/shared/entities/album.entity';
 import { PaginationDto } from 'src/shared/dtos/pagination.dto';
@@ -92,7 +92,7 @@ public async searchAlbums(searchQuery: string | null, pagination: PaginationDto)
   } else {
     albums = await this.albumRepository.find({
       where: {
-        title: Like(`%${searchQuery}%`),
+        title: ILike(`%${searchQuery}%`),
       },
       skip: (pagination.page - 1) * pagination.pageSize,
       take: pagination.pageSize,
@@ -134,18 +134,18 @@ async addSongToAlbum(songId: string, albumId: string): Promise<{ message: string
   };
 }
 
-async removeSongFromAlbum(songId: string): Promise<{ message: string }> {
+async removeSongFromAlbum(albumId: string, songId: string): Promise<{ message: string }> {
   const song = await this.songRepository.findOne({
     where: { id: songId },
     relations: ['album'],
   });
 
   if (!song) {
-    throw new NotFoundException('Song not found');
+    throw new NotFoundException(`Song with ID ${songId} not found`);
   }
 
-  if (!song.album) {
-    return { message: 'Song is not associated with any album' };
+  if (song.album?.id !== albumId) {
+    throw new NotFoundException(`Song is not part of album ${albumId}`);
   }
 
   song.album = null;
@@ -156,3 +156,7 @@ async removeSongFromAlbum(songId: string): Promise<{ message: string }> {
 
 
 }
+
+
+
+

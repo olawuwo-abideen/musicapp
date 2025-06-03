@@ -93,7 +93,7 @@ return await this.albumsService.getAlbum(id)
 
 @Post(':songId/:albumId')
 @ApiOperation({ summary: 'Add song album' })
-async addToAlbum(
+async addSongToAlbum(
 @Param('songId') songId: string,
 @Param('albumId') albumId: string,
 ) {
@@ -102,12 +102,13 @@ return await this.albumsService.addSongToAlbum(songId, albumId);
 
 
 
-@Delete(':songId')
+@Delete(':albumId/:songId')
 @ApiOperation({ summary: 'Remove song from album' })
-async removeFromFavorites(
-@Param('id', IsValidUUIDPipe) id: string,
+async removeSongFromAlbum(
+@Param('albumId', IsValidUUIDPipe) albumId: string,
+@Param('songId', IsValidUUIDPipe) songId: string,
 ) {
-return this.albumsService.removeSongFromAlbum(id);
+return this.albumsService.removeSongFromAlbum(albumId, songId);
 }
 
 
