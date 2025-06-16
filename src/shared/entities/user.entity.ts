@@ -4,6 +4,7 @@ import { Favorite } from './favorite.entity';
 import { Playlist } from '../../shared/entities/playlist.entity';
 import { Song } from './song.entity';
 import { Like } from './like.entity';
+import { Follower } from './follower.entity';
 
 @Entity('user')
 export class User {
@@ -45,6 +46,8 @@ apiKey: string;
 @OneToMany(() => Playlist, (playlist) => playlist.user)
 playlists: Playlist[];
 
+@OneToMany(() => Follower, (follower) => follower.user)
+following: Follower[];
 
 @OneToMany(() => Song, (song) => song.user)
 songs: Song[];

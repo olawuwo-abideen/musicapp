@@ -2,6 +2,7 @@ import { Exclude, instanceToPlain } from 'class-transformer';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 import { Song } from './song.entity';
 import { Album } from './album.entity';
+import { Follower } from './follower.entity';
 
 
 @Entity('artist')
@@ -23,6 +24,13 @@ imageUrl: string;
 
 @Column({ default: 0 })
 playCounter: number;
+
+@Column({ default: 0 })
+followerCount: number;
+
+@OneToMany(() => Follower, (follower) => follower.artist)
+followers: Follower[];
+
 
 @OneToMany(() => Song, song => song.artist)
 songs: Song[];

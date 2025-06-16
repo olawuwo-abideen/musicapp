@@ -14,6 +14,7 @@ import { redisStore } from 'cache-manager-redis-store';
 import { RedisClientOptions } from 'redis';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { LikeModule } from './like/like.module';
+import { FollowerModule } from './follower/follower.module';
 
 
 @Module({
@@ -46,7 +47,8 @@ SongsModule,
 PlayListModule,
 UsersModule,
 SubscriptionModule,
-LikeModule
+LikeModule,
+FollowerModule
 ],
 controllers: [],
 providers: [],
