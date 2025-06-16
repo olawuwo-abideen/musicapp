@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, Up
 import { Favorite } from './favorite.entity';
 import { Playlist } from '../../shared/entities/playlist.entity';
 import { Song } from './song.entity';
+import { Like } from './like.entity';
 
 @Entity('user')
 export class User {
@@ -50,6 +51,10 @@ songs: Song[];
 
 @OneToMany(() => Favorite, (favorite) => favorite.user)
 favorites: Favorite[];
+
+@OneToMany(() => Like, like => like.user)
+likes: Like[];
+
 
 @Column({ type: 'timestamp', nullable: true })
 lastLogin?: Date;

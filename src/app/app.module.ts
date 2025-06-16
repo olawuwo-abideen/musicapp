@@ -12,6 +12,8 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { redisStore } from 'cache-manager-redis-store';
 import { RedisClientOptions } from 'redis';
+import { SubscriptionModule } from './subscription/subscription.module';
+import { LikeModule } from './like/like.module';
 
 
 @Module({
@@ -42,7 +44,9 @@ ArtistsModule,
 AlbumsModule,
 SongsModule,
 PlayListModule,
-UsersModule
+UsersModule,
+SubscriptionModule,
+LikeModule
 ],
 controllers: [],
 providers: [],

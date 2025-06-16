@@ -15,6 +15,7 @@ import { Exclude, instanceToPlain } from 'class-transformer';
 import { Favorite } from './favorite.entity';
 import { Artist } from './artist.entity';
 import { Album } from './album.entity';
+import { Like } from './like.entity';
 
 export enum Genre {
 POP = 'pop',
@@ -65,6 +66,9 @@ songImageUrl: string;
 @Column({ default: 0 })
 playCounter: number;
 
+@Column({ default: 0 })
+likeCount: number;
+
 @Column({nullable: true})
 @Exclude()
 albumId: string;
@@ -96,6 +100,9 @@ artist: Artist;
 
 @ManyToOne(() => Album, album => album.songs)
 album: Album; 
+
+@OneToMany(() => Like, like => like.song)
+likes: Like[];
 
 
 @CreateDateColumn({

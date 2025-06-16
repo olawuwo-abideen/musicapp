@@ -4,6 +4,7 @@ IsDateString,
 IsNotEmpty,
 IsOptional,
 IsString,
+IsUUID
 } from 'class-validator';
 import { Genre, SongLanguage } from '../../../shared/entities/song.entity';
 
@@ -20,10 +21,12 @@ title : string;
 
 @ApiProperty({ required: true, description: 'Artist ID' })
 @IsNotEmpty()
+ @IsUUID()
 artistId: string;
 
 @ApiProperty({ required: true, description: 'Album ID' })
 @IsOptional()
+ @IsUUID()
 albumId: string;
 
 
@@ -98,10 +101,12 @@ title : string;
 
 @ApiProperty({ required: true, description: 'Artist ID' })
 @IsNotEmpty()
+ @IsUUID()
 artistId: string;
 
 @ApiProperty({ required: true, description: 'Album ID' })
 @IsOptional()
+ @IsUUID()
 albumId: string;
 
 
