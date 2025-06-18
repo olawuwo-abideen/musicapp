@@ -58,6 +58,7 @@ export class UsersController {
 
 
     @Get('enable-2fa')
+     @ApiOperation({ summary: 'Enable 2 Factor Authentication' })
     enable2FA(
         @CurrentUser() user: User
     ): Promise<Enable2FAType> {
@@ -65,6 +66,7 @@ export class UsersController {
     }
   
     @Post('validate-2fa')
+     @ApiOperation({ summary: 'Validate 2 Factor Authentication' })
     validate2FA(
         @CurrentUser() user: User,
       @Body()
@@ -76,6 +78,7 @@ export class UsersController {
       );
     }
     @Get('disable-2fa')
+     @ApiOperation({ summary: 'Disable 2 Factor Authentication' })
     disable2FA(
       @CurrentUser() user: User,
     ): Promise<{  message: string }> {

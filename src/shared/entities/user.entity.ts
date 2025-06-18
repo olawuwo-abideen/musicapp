@@ -5,6 +5,8 @@ import { Playlist } from '../../shared/entities/playlist.entity';
 import { Song } from './song.entity';
 import { Like } from './like.entity';
 import { Follower } from './follower.entity';
+import { Subscription } from './subscription.entity';
+import { Payment } from './payment.entity';
 
 @Entity('user')
 export class User {
@@ -57,6 +59,13 @@ favorites: Favorite[];
 
 @OneToMany(() => Like, like => like.user)
 likes: Like[];
+
+@OneToMany(() => Subscription, (subscription) => subscription.user)
+subscriptions: Subscription[];
+
+@OneToMany(() => Payment, (payment) => payment.user)
+payments: Payment[];
+
 
 
 @Column({ type: 'timestamp', nullable: true })
