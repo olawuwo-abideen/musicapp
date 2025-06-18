@@ -61,7 +61,6 @@ name: 'updated_at',
 })
 updatedAt: Date;
 
-// Check if the subscription has expired
 @Expose()
 get isExpired(): boolean {
 return this.expiresAt < new Date();
@@ -79,4 +78,5 @@ plan: Plan;
 toJSON?(): Record<string, any> {
 return instanceToPlain(this);
 }
+
 }

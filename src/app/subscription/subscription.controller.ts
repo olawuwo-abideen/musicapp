@@ -39,11 +39,14 @@ async getCurrentSubscription(
 return this.subscriptionService.getCurrentSubscription(user);
 }
 
-//   @Post('renew')
-//   async renewSubscription(
-//     @Body() payload: RenewSubscriptionDto,
-//     @CurrentUser() user: User,
-//   ): Promise<null> {
-//     return this.subscriptionService.renewSubscription(payload, user);
-//   }
+@Post('renew')
+@ApiOperation({ summary: 'Renew user plan' })
+async renewSubscription(
+@Body() payload: RenewSubscriptionDto,
+@CurrentUser() user: User,
+): Promise<{ message: string }> {
+return this.subscriptionService.renewSubscription(payload, user);
+}
+
+
 }

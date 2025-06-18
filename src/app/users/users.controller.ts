@@ -13,77 +13,77 @@ import {ValidateTokenDTO} from "./dto/validate-token.dto"
 @ApiBearerAuth()
 @Controller('user')
 export class UsersController {
-    
-    constructor(private readonly userService: UsersService) {}
-    @Get('')
-    @ApiOperation({ summary: 'Get current user profile' })
-    @ApiResponse({ 
-    status: HttpStatus.OK,
-    description:
-    'User profile retrieve successfully.',
-    })
-    async getProfile(@Request() req: RequestWithUser) {
-    return await this.userService.profile(req.user);
-    }
-    
-    @Post('change-password')
-    @ApiOperation({ summary: 'User change password' })
-    @ApiBody({ type: ChangePasswordDto, description: 'Change user password' })
-    @ApiResponse({
-    status: HttpStatus.OK,
-    description:
-    'User Password updated successfully',
-    })
-    public async changePassword(
-    @Body() payload: ChangePasswordDto,
-    @CurrentUser() user: User,
-    ) {
-    return await this.userService.changePassword(payload, user);
-    }
-    
-    @Put('')
-    @ApiOperation({ summary: 'Update user profile' })
-    @ApiBody({ type: UpdateProfileDto, description: 'Update user profile data' })
-    @ApiResponse({
-    status: HttpStatus.OK,
-    description:
-    'User profile updated successfully',
-    })
-    public async updateProfile(
-    @Body() payload: UpdateProfileDto,
-    @CurrentUser() user: User,
-    ) {
-    return await this.userService.updateProfile(payload, user);
-    }
+
+constructor(private readonly userService: UsersService) {}
+@Get('')
+@ApiOperation({ summary: 'Get current user profile' })
+@ApiResponse({ 
+status: HttpStatus.OK,
+description:
+'User profile retrieve successfully.',
+})
+async getProfile(@Request() req: RequestWithUser) {
+return await this.userService.profile(req.user);
+}
+
+@Post('change-password')
+@ApiOperation({ summary: 'User change password' })
+@ApiBody({ type: ChangePasswordDto, description: 'Change user password' })
+@ApiResponse({
+status: HttpStatus.OK,
+description:
+'User Password updated successfully',
+})
+public async changePassword(
+@Body() payload: ChangePasswordDto,
+@CurrentUser() user: User,
+) {
+return await this.userService.changePassword(payload, user);
+}
+
+@Put('')
+@ApiOperation({ summary: 'Update user profile' })
+@ApiBody({ type: UpdateProfileDto, description: 'Update user profile data' })
+@ApiResponse({
+status: HttpStatus.OK,
+description:
+'User profile updated successfully',
+})
+public async updateProfile(
+@Body() payload: UpdateProfileDto,
+@CurrentUser() user: User,
+) {
+return await this.userService.updateProfile(payload, user);
+}
 
 
-    @Get('enable-2fa')
-     @ApiOperation({ summary: 'Enable 2 Factor Authentication' })
-    enable2FA(
-        @CurrentUser() user: User
-    ): Promise<Enable2FAType> {
-      return this.userService.enable2FA(user);
-    }
-  
-    @Post('validate-2fa')
-     @ApiOperation({ summary: 'Validate 2 Factor Authentication' })
-    validate2FA(
-        @CurrentUser() user: User,
-      @Body()
-      ValidateTokenDTO: ValidateTokenDTO,
-    ): Promise<{ verified: boolean }> {
-      return this.userService.validate2FAToken(
-        user,
-        ValidateTokenDTO.token,
-      );
-    }
-    @Get('disable-2fa')
-     @ApiOperation({ summary: 'Disable 2 Factor Authentication' })
-    disable2FA(
-      @CurrentUser() user: User,
-    ): Promise<{  message: string }> {
-      return this.userService.disable2FA(user);
-    }
-    
+@Get('enable-2fa')
+@ApiOperation({ summary: 'Enable 2 Factor Authentication' })
+enable2FA(
+@CurrentUser() user: User
+): Promise<Enable2FAType> {
+return this.userService.enable2FA(user);
+}
+
+@Post('validate-2fa')
+@ApiOperation({ summary: 'Validate 2 Factor Authentication' })
+validate2FA(
+@CurrentUser() user: User,
+@Body()
+ValidateTokenDTO: ValidateTokenDTO,
+): Promise<{ verified: boolean }> {
+return this.userService.validate2FAToken(
+user,
+ValidateTokenDTO.token,
+);
+}
+@Get('disable-2fa')
+@ApiOperation({ summary: 'Disable 2 Factor Authentication' })
+disable2FA(
+@CurrentUser() user: User,
+): Promise<{  message: string }> {
+return this.userService.disable2FA(user);
+}
+
 
 }
