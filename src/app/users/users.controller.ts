@@ -6,8 +6,7 @@ import { User } from '../../shared/entities/user.entity';
 import { UsersService } from './users.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
-import { Enable2FAType } from '../../shared/types/type';
-import {ValidateTokenDTO} from "./dto/validate-token.dto"
+import { Validate2faTokenDTO } from "./dto/validate-token.dto"
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -57,33 +56,37 @@ return await this.userService.updateProfile(payload, user);
 }
 
 
-@Get('enable-2fa')
-@ApiOperation({ summary: 'Enable 2 Factor Authentication' })
-enable2FA(
-@CurrentUser() user: User
-): Promise<Enable2FAType> {
-return this.userService.enable2FA(user);
+@Post('initiate-2fa')
+@ApiOperation({ summary: 'Initiate Multi Factor Authentication' })
+async initiate2FASetup(
+  @CurrentUser() user: User
+): Promise<{ message: string, secret: string }> {
+  return this.userService.initiate2FASetup(user);
 }
 
-@Post('validate-2fa')
-@ApiOperation({ summary: 'Validate 2 Factor Authentication' })
-validate2FA(
+
+@Post('verify-2fa')
+@ApiOperation({ summary: 'Validate Multi Factor Authentication' })
+async verify2FA(
 @CurrentUser() user: User,
 @Body()
-ValidateTokenDTO: ValidateTokenDTO,
-): Promise<{ verified: boolean }> {
-return this.userService.validate2FAToken(
+ValidateTokenDTO: Validate2faTokenDTO,
+): Promise<{ verified: boolean; message: string }> {
+return this.userService.verify2FASetup(
 user,
 ValidateTokenDTO.token,
 );
 }
-@Get('disable-2fa')
+
+
+@Post('disable-2fa')
 @ApiOperation({ summary: 'Disable 2 Factor Authentication' })
-disable2FA(
+async disable2FA(
 @CurrentUser() user: User,
 ): Promise<{  message: string }> {
 return this.userService.disable2FA(user);
 }
+
 
 
 }

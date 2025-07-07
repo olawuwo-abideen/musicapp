@@ -38,8 +38,15 @@ resetToken: string | null;
 twoFASecret: string;
 
 @Column({ default: false, type: 'boolean' })
-@Exclude()
 enable2FA: boolean;
+
+@Column({ nullable: true })
+@Exclude()
+tempTwoFASecret?: string;
+
+@Column({ nullable: true, type: 'timestamp' })
+@Exclude()
+tempTwoFAExpiresAt?: Date;
 
 @Column({ nullable: true })
 @Exclude()

@@ -2,17 +2,18 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
 IsEmail,
 IsNotEmpty,  
+IsOptional,  
 IsString, 
 Matches,
 MaxLength,
 MinLength,
 } from 'class-validator';
 
-export class LoginDTO {
+export class LoginDto {
 @ApiProperty({
 required: true,
 description: 'Email address of the user',
-example: 'janedoe@gmail.com',
+example: 'abideenolawuwo@gmail.com',
 })
 @IsNotEmpty()
 @IsEmail()
@@ -35,4 +36,16 @@ message:
 },
 )
 password: string;
+
+
+
+
+
+@ApiProperty({
+required: true,
+description: 'two FA Token',
+example: '972238',
+})
+@IsOptional()
+twoFAToken: string
 }

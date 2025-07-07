@@ -1,10 +1,10 @@
 import { BadRequestException, Body, Controller, Get, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupDTO } from './dto/signup.dto';
-import { LoginDTO } from './dto/login.dto';
+import { LoginDto } from './dto/login.dto';
 import { Public } from '../../shared/decorators/public.decorator';
 import { ForgotPasswordDto, ResetPasswordDto } from './dto/reset-password.dto';
-import {  Response } from 'express';
+import { Response } from 'express';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../../shared/decorators/current-user.decorator';
 import { User } from '../../shared/entities/user.entity';
@@ -34,7 +34,7 @@ return await this.authService.signup(data);
 
 @Post('login')
 @ApiOperation({ summary: 'User Log-In' })
-@ApiBody({ type: LoginDTO, description: 'User Log-In Data' })
+@ApiBody({ type: LoginDto, description: 'User Log-In Data' })
 @ApiResponse({
 status: HttpStatus.OK,
 description: 'User successfully signed in. Access token generated.',
@@ -43,9 +43,10 @@ description: 'User successfully signed in. Access token generated.',
 status: HttpStatus.UNAUTHORIZED,
 description: 'Invalid credentials.',
 })
-async login(@Body() user: LoginDTO) {
+async login(@Body() user: LoginDto) {
 return this.authService.login(user);
 }
+
 
 @Get('google/login')
 @ApiOperation({ summary: 'Google login' })
@@ -65,13 +66,10 @@ async verifyTurnstile(@Body('token') token: string) {
 if (!token) {
 throw new BadRequestException('Missing Turnstile token');
 }
-
 const isValid = await this.authService.verifyToken(token);
-
 if (!isValid) {
 throw new BadRequestException('Invalid Turnstile token');
 }
-
 return { success: true, message: 'Turnstile token verified successfully' };
 }
 
