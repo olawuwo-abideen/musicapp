@@ -25,7 +25,7 @@ export class AlbumsController {
 constructor(private albumsService: AlbumsService) {}
 
 @Post('')
-@ApiOperation({ summary: 'Create album' })
+@ApiOperation({ summary: 'Create an album' })
 public async createAlbum(
 @Body() data: CreateAlbumDTO,
 ) {
@@ -36,7 +36,7 @@ return await this.albumsService.createAlbum(data)
 @CacheKey('__key')
 @CacheTTL(60000)
 @Get('')
-@ApiOperation({ summary: 'Get album' })
+@ApiOperation({ summary: 'Get an album' })
 @ApiQuery({ name: 'page', required: false, example: 1 })
 @ApiQuery({ name: 'pageSize', required: false, example: 10 })
 public async getAlbums(@Query() paginationDto: PaginationDto) {

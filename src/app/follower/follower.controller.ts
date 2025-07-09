@@ -10,7 +10,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 export class FollowerController {
 constructor(private readonly followerService: FollowerService) {}
 
-@Post(':artistId')
+@Post('/:artistId')
 @ApiOperation({ summary: 'Follow an artist' })
 async follow(
 @CurrentUser() user: User,
@@ -18,7 +18,7 @@ async follow(
 return this.followerService.followArtist(artistId, user);
 }
 
-@Delete(':artistId')
+@Delete('/:artistId')
 @ApiOperation({ summary: 'Unfollow an artist' })
 async unfollow(
 @CurrentUser() user: User,
@@ -26,7 +26,7 @@ async unfollow(
 return this.followerService.unfollowArtist(artistId, user);
 }
 
-@Get(':artistId/followers')
+@Get('/followers/:artistId')
 @ApiOperation({ summary: 'Get artist follower' })
 async count(@Param('artistId') artistId: string) {
 return this.followerService.countFollowers(artistId);

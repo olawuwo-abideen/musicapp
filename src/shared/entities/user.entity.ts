@@ -7,6 +7,7 @@ import { Like } from './like.entity';
 import { Follower } from './follower.entity';
 import { Subscription } from './subscription.entity';
 import { Payment } from './payment.entity';
+import { Stream } from './stream.entity';
 
 @Entity('user')
 export class User {
@@ -73,6 +74,9 @@ subscriptions: Subscription[];
 @OneToMany(() => Payment, (payment) => payment.user)
 payments: Payment[];
 
+
+@OneToMany(() => Stream, (stream) => stream.user)
+streams: Stream[];
 
 
 @Column({ type: 'timestamp', nullable: true })

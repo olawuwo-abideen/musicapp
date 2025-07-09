@@ -74,7 +74,7 @@ return { message: 'Album deleted successfully' };
 }
 
 public async getAlbum(id: string): Promise<{ message: string; album: Album }> {
-const album = await this.albumRepository.findOne({ where: { id } });
+const album = await this.albumRepository.findOne({ where: { id }, relations: ['songs'], });
 
 if (!album) {
 throw new NotFoundException(`Album with ID ${id} not found`);

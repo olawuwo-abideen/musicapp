@@ -41,6 +41,7 @@ public async createSong(data: CreateSongDTO): Promise<{ message: string; song: S
     language: data.language,
     songUrl: data.songUrl,
     songImageUrl: data.songImageUrl,
+    lyrics:data.lyrics,
     artist,
     album, 
   });
@@ -48,6 +49,13 @@ public async createSong(data: CreateSongDTO): Promise<{ message: string; song: S
   const savedSong = await this.songRepository.save(song);
 
   return { message: 'Song created successfully', song: savedSong };
+}
+
+async getAllGenres() {
+  return this.songRepository
+    .createQueryBuilder('song')
+    .select('DISTINCT song.genre', 'genre')
+    .getRawMany();
 }
 
 // public async updateSong(id: string, data: UpdateSongDto): Promise<{ message: string; song: Song }> {

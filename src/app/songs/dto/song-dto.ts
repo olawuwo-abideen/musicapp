@@ -86,6 +86,15 @@ example: 'songImageUrl'
 @IsNotEmpty()
 songImageUrl: string;
 
+@ApiProperty({
+required: true,
+description: 'The song lyrics',
+example: 'song lyrics'
+})
+@IsString()
+@IsOptional()
+lyrics: string;
+
 }
 
 export class UpdateSongDto {
@@ -164,4 +173,14 @@ example: 'songImageUrl'
 @IsString()
 @IsNotEmpty()
 songImageUrl: string;
+
+
+@ApiProperty({
+required: true,
+description: 'The song lyrics',
+example: 'song lyrics'
+})
+@IsString()
+@IsOptional()
+lyrics: string;
 }

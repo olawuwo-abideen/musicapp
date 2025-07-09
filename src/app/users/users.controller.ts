@@ -56,7 +56,7 @@ return await this.userService.updateProfile(payload, user);
 }
 
 
-@Post('initiate-2fa')
+@Post('initiate-mfa')
 @ApiOperation({ summary: 'Initiate Multi Factor Authentication' })
 async initiate2FASetup(
   @CurrentUser() user: User
@@ -65,7 +65,7 @@ async initiate2FASetup(
 }
 
 
-@Post('verify-2fa')
+@Post('verify-mfa')
 @ApiOperation({ summary: 'Validate Multi Factor Authentication' })
 async verify2FA(
 @CurrentUser() user: User,
@@ -79,8 +79,8 @@ ValidateTokenDTO.token,
 }
 
 
-@Post('disable-2fa')
-@ApiOperation({ summary: 'Disable 2 Factor Authentication' })
+@Post('disable-mfa')
+@ApiOperation({ summary: 'Disable Multi Factor Authentication' })
 async disable2FA(
 @CurrentUser() user: User,
 ): Promise<{  message: string }> {

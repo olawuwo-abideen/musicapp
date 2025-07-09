@@ -3,7 +3,7 @@ import { Song } from './song.entity';
 import { User } from './user.entity';
 import { Exclude } from 'class-transformer';
 
-@Entity('Like')
+@Entity('like')
 export class Like {
   @PrimaryGeneratedColumn('uuid')
   id: string;

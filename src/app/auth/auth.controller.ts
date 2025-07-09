@@ -53,14 +53,14 @@ return this.authService.login(user);
 @UseGuards(AuthGuard('google'))
 async googleAuth(@Req() req) {}
 
-@Get('redirect')
+@Get('google/redirect')
 @ApiOperation({ summary: 'Google redirect' })
 @UseGuards(AuthGuard('google'))
 googleAuthRedirect(@Req() req) {
 return this.authService.googleLogin(req)
 }
 
-@Post('verify')
+@Post('cloudfare-verify')
 @ApiOperation({ summary: 'Implement Cloudfare authentication' })
 async verifyTurnstile(@Body('token') token: string) {
 if (!token) {

@@ -16,6 +16,7 @@ import { Favorite } from './favorite.entity';
 import { Artist } from './artist.entity';
 import { Album } from './album.entity';
 import { Like } from './like.entity';
+import { Stream } from './stream.entity';
 
 export enum Genre {
 POP = 'pop',
@@ -63,6 +64,9 @@ songUrl: string;
 @Column({nullable: true})
 songImageUrl: string;
 
+@Column({ type: 'text', nullable: true })
+lyrics: string;
+
 @Column({ default: 0 })
 playCounter: number;
 
@@ -104,6 +108,8 @@ album: Album;
 @OneToMany(() => Like, like => like.song)
 likes: Like[];
 
+@OneToMany(() => Stream, (stream) => stream.song)
+streams: Stream[];
 
 @CreateDateColumn({
 name: 'created_at',

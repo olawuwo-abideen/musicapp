@@ -2,14 +2,13 @@ import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { Playlist } from '../../shared/entities/playlist.entity';
 import { Song } from '../../shared/entities/song.entity';
 import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { EntityManager, FindOneOptions, Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { User } from '../../shared/entities/user.entity';
 import {  AddSongToPlayListDto, RemoveSongToPlayListDto, UpdatePlayListDto } from './dto/create-playlist.dto';
 
 @Injectable()
 export class PlayListsService {
   constructor(
-    @InjectEntityManager() private readonly entityManager: EntityManager,
     @InjectRepository(Playlist)
     private playListRepository: Repository<Playlist>,
     @InjectRepository(Song)

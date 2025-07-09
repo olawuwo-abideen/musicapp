@@ -15,6 +15,9 @@ import { RedisClientOptions } from 'redis';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { LikeModule } from './like/like.module';
 import { FollowerModule } from './follower/follower.module';
+import { FeedbackModule } from './feedback/feedback.module';
+import { RecommendationModule } from './recommendation/recommendation.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 
 @Module({
@@ -48,7 +51,10 @@ PlayListModule,
 UsersModule,
 SubscriptionModule,
 LikeModule,
-FollowerModule
+FollowerModule,
+FeedbackModule,
+RecommendationModule,
+AnalyticsModule
 ],
 controllers: [],
 providers: [],

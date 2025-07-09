@@ -34,7 +34,7 @@ public async getArtists(pagination: PaginationDto): Promise<{ message: string; d
 
 
 public async getArtist(id: string): Promise<{ message: string; artists: Artist }> {
-const artists = await this.artistRepository.findOne({ where: { id } });
+const artists = await this.artistRepository.findOne({ where: { id }, relations: ['songs'],});
 
 if (!artists) {
 throw new NotFoundException(`Artist with ID ${id} not found`);

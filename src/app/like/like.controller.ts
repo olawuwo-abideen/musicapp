@@ -27,7 +27,7 @@ async unlike(
 return this.likeService.unlikeSong(songId, user);
 }
 
-@Get(':id/count')
+@Get('count/:id')
 @ApiOperation({ summary: 'Get song like' })
 async getLikeCount(
 @Param('id', IsValidUUIDPipe) id: string) {

@@ -59,7 +59,10 @@ The following API endpoints are available:
 
 - **POST /auth/signup**: User signup.
 - **POST /auth/login**: User login.
+- **GET /auth/google/login**: Google login.
 - **POST /auth/logout**: User logout.
+- **GET /auth/google/redirect**: Google login redirect.
+- **POST /auth/cloudfare-verify**: Cloudfare verify.
 - **POST /auth/forgot-password**: User forget password.
 - **POST /auth/reset-password**: User reset password.
 
@@ -68,6 +71,10 @@ The following API endpoints are available:
 - **GET /user/**:Retrieve the currently authenticated user’s profile.
 - **POST user/change-password**: User change password.
 - **PUT /user/**: update the user’s profile.
+- **POST user/change-password**: User change password.
+- **POST user/initiate-mfa**: Initiate Multi Factor Authentication.
+- **POST user/verify-mfa**: Validate Multi Factor Authentication.
+- **POST user/disable-mfa**:Disable Multi Factor Authentication.
 
 **Songs**
 
@@ -99,7 +106,7 @@ The following API endpoints are available:
 - **POST /artist** – Create an artist  
 - **GET artist/search/query** – Search artist
 - **GET /artist/{artistId}** – Get artist 
-- **PUT /artist/{artistId}** – Update artist 
+- **PUT /artist/{artistId}** – Update an artist 
 - **DELETE /artist/{artistId}** – Delete artist  
 - **GET /artist/leaderboard** – Get top artist
 
@@ -114,3 +121,44 @@ The following API endpoints are available:
 - **GET album/search/query** – Search album
 - **POST /album/{songId}/{albumId}** – Add song to album
 - **POST /album/{songId}** – Remove song from album
+
+
+
+**Follow**
+
+- **POST /follow/{artistId}** – Follow an artist
+- **DELETE /follow/{artistId}** – Unfollow an artist
+- **GET /follow/followers/{artistId}** – Get artist follower 
+
+
+**Like**
+
+- **POST /likes/{songId}** – Like a song
+- **DELETE /likes/{songId}** – UnLike a song
+- **GET /likes/count/{songId}** – Get song like
+
+
+**Subscription**
+
+- **POST /subscription/plans** – Create a plan
+- **GET /subscription/plans/user** – Get current user plan
+- **GET /subscription/plans** – Get all plans
+- **POST /subscription/plans/renew** – Get song like
+
+
+**Feedback**
+
+- **POST /feedback/{songId}** – Submit feedback for the app
+- **POST /feedback/report/song/:id** – Report a song
+
+
+**Analytics**
+
+- **GET /analytics/user/stats** – Get user statistics
+- **GET /analytics/artist/stats/:id** – Get artist statistics
+
+
+**Recommendation**
+
+- **POST /feedback/trending** – Get trending songs
+- **POST /feedback/songs** – Recommend songs

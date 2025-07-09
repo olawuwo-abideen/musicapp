@@ -16,8 +16,8 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 export class SubscriptionController {
 constructor(private readonly subscriptionService: SubscriptionService) {}
 
-@Get('/plans')
-@ApiOperation({ summary: 'Get all plan' })
+@Get('plans')
+@ApiOperation({ summary: 'Get all plans' })
 async getPlans(@CurrentUser() user: User): Promise<Plan[]> {
 return this.subscriptionService.getPlans(user);
 }
@@ -31,7 +31,7 @@ throw new NotFoundException();
 return this.subscriptionService.createPlan(createPlanDto);
 }
 
-@Get()
+@Get('plans/user')
 @ApiOperation({ summary: 'Get current user plan' })
 async getCurrentSubscription(
 @CurrentUser() user: User,
@@ -39,7 +39,7 @@ async getCurrentSubscription(
 return this.subscriptionService.getCurrentSubscription(user);
 }
 
-@Post('renew')
+@Post('plans/renew')
 @ApiOperation({ summary: 'Renew user plan' })
 async renewSubscription(
 @Body() payload: RenewSubscriptionDto,

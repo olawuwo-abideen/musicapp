@@ -72,6 +72,11 @@ async getFavorites(
   return await this.songsService.getFavorites(user, pagination);
 }
 
+@Get('/genres')
+@ApiOperation({ summary: 'Get all song genre' })
+async getGenres() {
+  return this.songsService.getAllGenres();
+}
 
 @Put(':id')
 @ApiOperation({ summary: 'Update a song' })
@@ -133,6 +138,8 @@ async removeFromFavorites(
 ) {
 return this.songsService.removeFromFavorites(user, id);
 }
+
+
 
 
 
