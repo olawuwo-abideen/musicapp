@@ -93,21 +93,21 @@ export class SubscriptionService implements OnModuleInit {
     return await this.planRepository.find({ where });
   }
 
+  async getCurrentSubscription(user: User | string): Promise<Subscription | null> {
+  const userId = !isString(user) ? user.id : user;
 
-  async getCurrentSubscription(
-    user: User | string,
-  ): Promise<Subscription | null> {
-    const userId = !isString(user) ? user.id : user;
+  const subscription = await this.subscriptionRepository.findOne({
+    where: { userId },
+    relations: ['plan'],
+  });
 
-    return await this.subscriptionRepository.findOne({
-      where: { userId },
-      relations: ['plan'],
-    });
-  }
+  console.log('Found subscription:', subscription); 
+
+  return subscription;
+}
 
  
 async renewSubscription(data: RenewSubscriptionDto, user: User) {
-  // Fetch the plan
   const plan = await this.planRepository.findOne({ where: { id: data.planId } });
   if (!plan) {
     throw new BadRequestException('Invalid subscription plan. Please contact support.');

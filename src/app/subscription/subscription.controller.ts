@@ -31,13 +31,13 @@ throw new NotFoundException();
 return this.subscriptionService.createPlan(createPlanDto);
 }
 
+
 @Get('plans/user')
 @ApiOperation({ summary: 'Get current user plan' })
-async getCurrentSubscription(
-@CurrentUser() user: User,
-): Promise<Subscription | null> {
-return this.subscriptionService.getCurrentSubscription(user);
+async getCurrentSubscription(@CurrentUser() user: User): Promise<Subscription | null> {
+  return this.subscriptionService.getCurrentSubscription(user);
 }
+
 
 @Post('plans/renew')
 @ApiOperation({ summary: 'Renew user plan' })

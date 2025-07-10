@@ -20,6 +20,8 @@ import { ConfigService } from '@nestjs/config';
 import * as bcryptjs from "bcryptjs"
 import axios from "axios";
 import * as speakeasy from 'speakeasy';
+import { Plan } from 'src/shared/entities/plan.entity';
+import { Subscription, SubscriptionStatusEnum } from 'src/shared/entities/subscription.entity';
 
 @Injectable()
 export class AuthService {
@@ -31,8 +33,29 @@ private readonly configService: ConfigService,
 @InjectEntityManager() private readonly entityManager: EntityManager,
 @InjectRepository(User)
 private readonly userRepository: Repository<User>,
-private readonly emailService: EmailService
+private readonly emailService: EmailService,
+@InjectRepository(Plan)
+private readonly planRepository: Repository<Plan>,
+@InjectRepository(Subscription)
+private readonly subscriptionRepository: Repository<Subscription>,
+
 ) {}
+
+private async assignFreePlanIfNoneExists(userId: string) {
+const existing = await this.subscriptionRepository.findOne({ where: { userId } });
+if (existing) return;
+
+const freePlan = await this.planRepository.findOne({ where: { amount: 0 } });
+if (!freePlan) return;
+
+await this.subscriptionRepository.save({
+userId,
+planId: freePlan.id,
+expiresAt: new Date('2099-12-31'),
+status: SubscriptionStatusEnum.ACTIVE,
+});
+}
+
 
 
 public async signup(data: SignupDTO) {
@@ -42,53 +65,67 @@ where: { email: data.email },
 if (existingEmailUser) {
 throw new ConflictException('Email is already in use');
 }
+
 const saltRounds = 10;
-const password: string = await bcryptjs.hash(data.password, saltRounds);
+const password = await bcryptjs.hash(data.password, saltRounds);
+
 let user: User = this.userRepository.create({
 firstName: data.firstName,
 lastName: data.lastName,
 dob: data.dob,
 email: data.email,
-password: password,
+password,
 });
+
 user = await this.entityManager.transaction(async (manager) => {
-return await manager.save(User, user);
+const savedUser = await manager.save(User, user);
+await this.assignFreePlanIfNoneExists(savedUser.id); 
+return savedUser;
 });
+
 return {
 message: 'User signup successfully',
-user
-}
+user,
+};
 }
 
 
 public async login({ email, password, twoFAToken }: LoginDto) {
 const user: User | null = await this.userService.findOne({ email });
+
 if (!user || !(await bcryptjs.compare(password, user.password))) {
 throw new UnauthorizedException('Email or password is incorrect');
 }
+
 if (user.enable2FA) {
 if (!twoFAToken) {
 return {
 message: '2FA token required',
-requires2FA: true
+requires2FA: true,
 };
 }
+
 const isTokenValid = speakeasy.totp.verify({
 secret: user.twoFASecret,
 token: twoFAToken,
 encoding: 'base32',
-window: 1, 
+window: 1,
 });
+
 if (!isTokenValid) {
 throw new UnauthorizedException('Invalid 2FA token');
 }
 }
+
+await this.assignFreePlanIfNoneExists(user.id);
+
 return {
 message: 'User logged in successfully',
 token: this.createAccessToken(user),
 user,
 };
 }
+
 
 
 public createAccessToken(user: User): string {
@@ -190,6 +227,14 @@ message: 'User information from google',
 user: req.user
 }
 }
+
+
+
+
+
+
+
+
 
 
 }

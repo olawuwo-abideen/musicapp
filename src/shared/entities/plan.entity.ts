@@ -41,8 +41,7 @@ default: PlanStatusEnum.ACTIVE,
 })
 status: PlanStatusEnum;
 
-
-@OneToMany(() => Subscription, (subscription) => subscription.user)
+@OneToMany(() => Subscription, (subscription) => subscription.plan)
 subscriptions: Subscription[];
 
 @Expose()
