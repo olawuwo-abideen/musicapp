@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { CurrentUser } from 'src/shared/decorators/current-user.decorator';
-import { User } from 'src/shared/entities/user.entity';
+import { CurrentUser } from '../../shared/decorators/current-user.decorator';
+import { User } from '../../shared/entities/user.entity';
 import { AnalyticsService } from './analytics.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 

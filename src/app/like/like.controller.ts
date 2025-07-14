@@ -1,8 +1,8 @@
 import { Controller, Post, Delete, Param, Get } from '@nestjs/common';
 import { LikeService } from './like.service';
-import { IsValidUUIDPipe } from 'src/shared/pipes/is-valid-uuid.pipe';
-import { CurrentUser } from 'src/shared/decorators/current-user.decorator';
-import { User } from 'src/shared/entities/user.entity';
+import { IsValidUUIDPipe } from '../../shared/pipes/is-valid-uuid.pipe';
+import { CurrentUser } from '../../shared/decorators/current-user.decorator';
+import { User } from '../../shared/entities/user.entity';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiBearerAuth()

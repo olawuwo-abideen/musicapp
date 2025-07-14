@@ -20,8 +20,8 @@ import { ConfigService } from '@nestjs/config';
 import * as bcryptjs from "bcryptjs"
 import axios from "axios";
 import * as speakeasy from 'speakeasy';
-import { Plan } from 'src/shared/entities/plan.entity';
-import { Subscription, SubscriptionStatusEnum } from 'src/shared/entities/subscription.entity';
+import { Plan } from '../../shared/entities/plan.entity';
+import { Subscription, SubscriptionStatusEnum } from '../../shared/entities/subscription.entity';
 
 @Injectable()
 export class AuthService {

@@ -1,10 +1,10 @@
 import { Body, Controller, Param, Post } from '@nestjs/common';
-import { CurrentUser } from 'src/shared/decorators/current-user.decorator';
+import { CurrentUser } from '../../shared/decorators/current-user.decorator';
 import { FeedbackDto, ReportSongDto } from './dto/feedback.dto';
-import { User } from 'src/shared/entities/user.entity';
+import { User } from '../../shared/entities/user.entity';
 import { FeedbackService } from './feedback.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { IsValidUUIDPipe } from 'src/shared/pipes/is-valid-uuid.pipe';
+import { IsValidUUIDPipe } from '../../shared/pipes/is-valid-uuid.pipe';
 
 @ApiBearerAuth()
 @Controller('feedback')

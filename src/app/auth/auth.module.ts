@@ -10,8 +10,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './guards/auth-guard';
 import { User } from '../../shared/entities/user.entity';
 import { EmailModule } from '../../shared/modules/email/email.module';
-import { Plan } from 'src/shared/entities/plan.entity';
-import { Subscription } from 'src/shared/entities/subscription.entity';
+import { Plan } from '../../shared/entities/plan.entity';
+import { Subscription } from '../../shared/entities/subscription.entity';
 
 @Module({
   imports: [

@@ -4,8 +4,8 @@ import { Song } from '../../shared/entities/song.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like, ILike } from 'typeorm';
 import { Artist } from '../../shared/entities/artist.entity';
-import { Album } from 'src/shared/entities/album.entity';
-import { PaginationDto } from 'src/shared/dtos/pagination.dto';
+import { Album } from '../../shared/entities/album.entity';
+import { PaginationDto } from '../../shared/dtos/pagination.dto';
 
 
 @Injectable()

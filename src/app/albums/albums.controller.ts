@@ -14,7 +14,7 @@ import { CreateAlbumDTO, UpdateAlbumDTO } from './dto/albums-dto';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { IsValidUUIDPipe } from '../../shared/pipes/is-valid-uuid.pipe';
 import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
-import { PaginationDto } from 'src/shared/dtos/pagination.dto';
+import { PaginationDto } from '../../shared/dtos/pagination.dto';
 
 
 

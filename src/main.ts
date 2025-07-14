@@ -3,9 +3,9 @@ import { AppModule } from './app/app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './shared/exceptions/http.exception';
-import helmet from 'helmet';
-import * as compression from 'compression';
-import * as cookieParser from 'cookie-parser';
+// import helmet from 'helmet';
+// import * as compression from 'compression';
+// import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,9 +14,9 @@ async function bootstrap() {
   transform: true,  
 }));
     
-    app.use(cookieParser())
-    app.use(compression());
-    app.use(helmet());
+    // app.use(cookieParser())
+    // app.use(compression());
+    // app.use(helmet());
     app.enableCors({
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -38,7 +38,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config); 
-  SwaggerModule.setup('api-docs', app, document,{
+  SwaggerModule.setup('docs', app, document,{
     swaggerOptions: {
       persistAuthorization: true,
     },

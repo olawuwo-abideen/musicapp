@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Song } from 'src/shared/entities/song.entity';
+import { Song } from '../../shared/entities/song.entity';
 import { Repository } from 'typeorm';
 import { FeedbackDto, ReportSongDto } from './dto/feedback.dto';
-import { User } from 'src/shared/entities/user.entity';
-import { SongReport } from 'src/shared/entities/report.entity';
-import { Feedback } from 'src/shared/entities/feedback.entity';
+import { User } from '../../shared/entities/user.entity';
+import { SongReport } from '../../shared/entities/report.entity';
+import { Feedback } from '../../shared/entities/feedback.entity';
 
 export class FeedbackService {
   constructor(

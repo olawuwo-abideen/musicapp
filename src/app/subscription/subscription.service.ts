@@ -13,7 +13,7 @@ import { Payment } from '../../shared/entities/payment.entity';
 import { RenewSubscriptionDto } from './dto/subscription.dto';
 import { generateUniqueReference } from '../../shared/utils/helpers.util';
 import { isString } from 'class-validator';
-import { StripeService } from 'src/shared/modules/stripe/stripe.service';
+import { StripeService } from '../../shared/modules/stripe/stripe.service';
 
 @Injectable()
 export class SubscriptionService implements OnModuleInit {
@@ -100,8 +100,6 @@ export class SubscriptionService implements OnModuleInit {
     where: { userId },
     relations: ['plan'],
   });
-
-  console.log('Found subscription:', subscription); 
 
   return subscription;
 }

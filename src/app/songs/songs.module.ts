@@ -5,8 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Song } from '../../shared/entities/song.entity';
 import { Favorite } from '../../shared/entities/favorite.entity';
 import { User } from '../../shared/entities/user.entity';
-import { Artist } from 'src/shared/entities/artist.entity';
-import { Album } from 'src/shared/entities/album.entity';
+import { Artist } from '../../shared/entities/artist.entity';
+import { Album } from '../../shared/entities/album.entity';
 
 @Module({
   imports: [

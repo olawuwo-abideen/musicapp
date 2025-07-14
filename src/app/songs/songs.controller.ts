@@ -17,7 +17,7 @@ import { IsValidUUIDPipe } from '../../shared/pipes/is-valid-uuid.pipe';
 import { CurrentUser } from '../../shared/decorators/current-user.decorator';
 import { User } from '../../shared/entities/user.entity';
 import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
-import { PaginationDto } from 'src/shared/dtos/pagination.dto';
+import { PaginationDto } from '../../shared/dtos/pagination.dto';
 
 
 @ApiBearerAuth()

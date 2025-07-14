@@ -3,7 +3,7 @@ import { CreateArtistDTO, UpdateArtistDTO } from './dto/artist-dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like, ILike } from 'typeorm';
 import { Artist } from '../../shared/entities/artist.entity';
-import { PaginationDto } from 'src/shared/dtos/pagination.dto';
+import { PaginationDto } from '../../shared/dtos/pagination.dto';
 
 
 @Injectable()

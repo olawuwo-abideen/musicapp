@@ -6,8 +6,8 @@ import { Repository, Like } from 'typeorm';
 import { Favorite } from '../../shared/entities/favorite.entity';
 import { User } from '../../shared/entities/user.entity';
 import { Artist } from '../../shared/entities/artist.entity';
-import { Album } from 'src/shared/entities/album.entity';
-import { PaginationDto } from 'src/shared/dtos/pagination.dto';
+import { Album } from '../../shared/entities/album.entity';
+import { PaginationDto } from '../../shared/dtos/pagination.dto';
 
 @Injectable()
 export class SongsService {

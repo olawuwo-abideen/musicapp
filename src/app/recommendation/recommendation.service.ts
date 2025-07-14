@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Genre, Song } from 'src/shared/entities/song.entity';
-import { Stream } from 'src/shared/entities/stream.entity';
-import { User } from 'src/shared/entities/user.entity';
+import { Genre, Song } from '../../shared/entities/song.entity';
+import { Stream } from '../../shared/entities/stream.entity';
+import { User } from '../../shared/entities/user.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
