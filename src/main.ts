@@ -3,6 +3,7 @@ import { AppModule } from './app/app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './shared/exceptions/http.exception';
+import { HttpResponseInterceptor } from './shared/interceptors/http-response.interceptor';
 // import helmet from 'helmet';
 // import * as compression from 'compression';
 // import * as cookieParser from 'cookie-parser';
@@ -28,7 +29,7 @@ const port = parseInt(String(process.env.PORT))
 
 const { httpAdapter } = app.get(HttpAdapterHost);
 app.useGlobalFilters(new HttpExceptionFilter(httpAdapter));
-
+app.useGlobalInterceptors(new HttpResponseInterceptor());
 
 const config = new DocumentBuilder() 
 .setTitle('Musicapp')
@@ -39,6 +40,17 @@ const config = new DocumentBuilder()
 
 const document = SwaggerModule.createDocument(app, config); 
 SwaggerModule.setup('docs', app, document,{
+customSiteTitle: "Api Docs",
+customfavIcon: "https://avatars.githubusercontent.com/u/6936373?s=200&v=4",
+customJs: [
+"https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js",
+"https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.js",
+],
+customCssUrl: [
+"https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css",
+"https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.css",
+"https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.css",
+],
 swaggerOptions: {
 persistAuthorization: true,
 },
