@@ -1,9 +1,9 @@
-export function isDevelopement(): boolean {
-  return process.env.NODE_ENV?.startsWith('dev') ? true : false;
+export function isDevelopment(): boolean {
+  return process.env.NODE_ENV?.startsWith('development') ? true : false;
 }
 
 export function isProduction(): boolean {
-  return process.env.NODE_ENV?.startsWith('prod') ? true : false;
+  return process.env.NODE_ENV?.startsWith('production') ? true : false;
 }
 
 export function generateUniqueReference(length = 10) {
