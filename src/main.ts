@@ -8,43 +8,46 @@ import { HttpExceptionFilter } from './shared/exceptions/http.exception';
 // import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe({
-  whitelist: true,
-  transform: true,  
+const app = await NestFactory.create(AppModule);
+app.useGlobalPipes(new ValidationPipe({
+whitelist: true,
+transform: true,  
 }));
-    
-    // app.use(cookieParser())
-    // app.use(compression());
-    // app.use(helmet());
-    app.enableCors({
-    origin: '*',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-    
-  });
 
-    const port = parseInt(String(process.env.PORT)) 
+// app.use(cookieParser())
+// app.use(compression());
+// app.use(helmet());
+app.enableCors({
+origin: '*',
+methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+credentials: true,
 
-  const { httpAdapter } = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new HttpExceptionFilter(httpAdapter));
+});
+
+const port = parseInt(String(process.env.PORT)) 
+
+const { httpAdapter } = app.get(HttpAdapterHost);
+app.useGlobalFilters(new HttpExceptionFilter(httpAdapter));
 
 
-  const config = new DocumentBuilder() 
-    .setTitle('Musicapp')
-    .setDescription('A Musicapp Api documentation')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
+const config = new DocumentBuilder() 
+.setTitle('Musicapp')
+.setDescription('A Musicapp Api documentation')
+.setVersion('1.0')
+.addBearerAuth()
+.build();
 
-  const document = SwaggerModule.createDocument(app, config); 
-  SwaggerModule.setup('docs', app, document,{
-    swaggerOptions: {
-      persistAuthorization: true,
-    },
-  });
+const document = SwaggerModule.createDocument(app, config); 
+SwaggerModule.setup('docs', app, document,{
+swaggerOptions: {
+persistAuthorization: true,
+},
+});
+app.getHttpAdapter().get('/', (_, res) => {
+res.redirect('/docs');
+});
 
-  await app.listen(port, '0.0.0.0');
+await app.listen(port, '0.0.0.0');
 
 }
 bootstrap();
