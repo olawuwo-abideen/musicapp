@@ -16,11 +16,10 @@ port: this.configService.get<number>('POSTGRES_PORT'),
 username: this.configService.get<string>('POSTGRES_USER'),
 password: this.configService.get<string>('POSTGRES_PASSWORD'),
 database: this.configService.get<string>('POSTGRES_DATABASE'),
-ssl: {
-rejectUnauthorized: false
-},
+ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 autoLoadEntities: true,
 synchronize,
+
 };
 }
 }

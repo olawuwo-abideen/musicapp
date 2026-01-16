@@ -61,8 +61,6 @@ genre: Genre;
 @Column({nullable: true})
 songUrl: string;
 
-@Column({nullable: true})
-songImageUrl: string;
 
 @Column({ type: 'text', nullable: true })
 lyrics: string;

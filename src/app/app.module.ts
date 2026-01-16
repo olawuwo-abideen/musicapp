@@ -48,8 +48,8 @@ import { AnalyticsModule } from './analytics/analytics.module';
 
         const store = await redisStore({
           socket: {
-            host: 'localhost',
-            port: 6379,
+        host: process.env.REDIS_HOST || 'redis',
+        port: Number(process.env.REDIS_PORT) || 6379,
           },
         });
 

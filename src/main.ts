@@ -4,12 +4,16 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './shared/exceptions/http.exception';
 import { HttpResponseInterceptor } from './shared/interceptors/http-response.interceptor';
+import { WinstonModule } from 'nest-winston';
+import * as winston from 'winston';
 // import helmet from 'helmet';
 // import * as compression from 'compression';
 // import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
-const app = await NestFactory.create(AppModule);
+const app = await NestFactory.create(AppModule
+
+);
 app.useGlobalPipes(new ValidationPipe({
 whitelist: true,
 transform: true,  
@@ -24,7 +28,7 @@ methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 credentials: true,
 
 });
-
+app.setGlobalPrefix('api');
 const port = parseInt(String(process.env.PORT)) 
 
 const { httpAdapter } = app.get(HttpAdapterHost);
@@ -39,7 +43,7 @@ const config = new DocumentBuilder()
 .build();
 
 const document = SwaggerModule.createDocument(app, config); 
-SwaggerModule.setup('docs', app, document,{
+SwaggerModule.setup("api/docs", app, document, {
 customSiteTitle: "Api Docs",
 customfavIcon: "https://avatars.githubusercontent.com/u/6936373?s=200&v=4",
 customJs: [
@@ -55,13 +59,11 @@ swaggerOptions: {
 persistAuthorization: true,
 },
 });
-app.getHttpAdapter().get('/', (_, res) => {
-res.redirect('/docs');
+
+app.getHttpAdapter().get('/api', (_, res) => {
+  res.redirect('/api/docs');
 });
-
-await app.listen(port, '0.0.0.0');
-
+await app.listen(4000);
 }
+
 bootstrap();
-
-

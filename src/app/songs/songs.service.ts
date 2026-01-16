@@ -8,6 +8,7 @@ import { User } from '../../shared/entities/user.entity';
 import { Artist } from '../../shared/entities/artist.entity';
 import { Album } from '../../shared/entities/album.entity';
 import { PaginationDto } from '../../shared/dtos/pagination.dto';
+import { uploadSongs } from 'src/shared/modules/aws/aws';
 
 @Injectable()
 export class SongsService {
@@ -22,34 +23,75 @@ private artistRepository: Repository<Artist>,
 private albumRepository: Repository<Album>,
 ) {}
 
-public async createSong(data: CreateSongDTO): Promise<{ message: string; song: Song }> {
-  const artist = await this.artistRepository.findOneBy({ id: data.artistId });
-  if (!artist) {
-    throw new NotFoundException('Artist not found');
+
+ public async createSong(
+    data: CreateSongDTO,
+    file: Express.Multer.File,
+  ): Promise<{ message: string; song: Song }> {
+    const artist = await this.artistRepository.findOneBy({ id: data.artistId });
+    if (!artist) throw new NotFoundException('Artist not found');
+
+    const album = await this.albumRepository.findOneBy({ id: data.albumId });
+    if (!album) throw new NotFoundException('Album not found');
+
+    // Upload file to S3
+    const songUrl = (await uploadSongs([file]))[0];
+
+    const song = this.songRepository.create({
+      ...data,
+      artist,
+      album,
+      songUrl, // store S3 URL
+    });
+
+    const savedSong = await this.songRepository.save(song);
+    return { message: 'Song created successfully', song: savedSong };
   }
 
-  const album = await this.albumRepository.findOneBy({ id: data.albumId });
-  if (!album) {
-    throw new NotFoundException('Album not found');
+  public async updateSong(
+    id: string,
+    data: UpdateSongDto,
+    file?: Express.Multer.File,
+  ): Promise<{ message: string; song: Song }> {
+    const song = await this.songRepository.findOne({ where: { id } });
+    if (!song) throw new NotFoundException(`Song with ID ${id} not found`);
+
+    // Upload new file if provided
+    if (file) {
+      song.songUrl = (await uploadSongs([file]))[0];
+    }
+
+    Object.assign(song, data);
+    const updatedSong = await this.songRepository.save(song);
+    return { message: 'Song updated successfully', song: updatedSong };
   }
 
-  const song = this.songRepository.create({
-    title: data.title,
-    genre: data.genre,
-    releasedDate: data.releasedDate,
-    duration: data.duration,
-    language: data.language,
-    songUrl: data.songUrl,
-    songImageUrl: data.songImageUrl,
-    lyrics:data.lyrics,
-    artist,
-    album, 
-  });
+// public async createSong(data: CreateSongDTO): Promise<{ message: string; song: Song }> {
+//   const artist = await this.artistRepository.findOneBy({ id: data.artistId });
+//   if (!artist) {
+//     throw new NotFoundException('Artist not found');
+//   }
 
-  const savedSong = await this.songRepository.save(song);
+//   const album = await this.albumRepository.findOneBy({ id: data.albumId });
+//   if (!album) {
+//     throw new NotFoundException('Album not found');
+//   }
 
-  return { message: 'Song created successfully', song: savedSong };
-}
+//   const song = this.songRepository.create({
+//     title: data.title,
+//     genre: data.genre,
+//     releasedDate: data.releasedDate,
+//     duration: data.duration,
+//     language: data.language,
+//     lyrics:data.lyrics,
+//     artist,
+//     album, 
+//   });
+
+//   const savedSong = await this.songRepository.save(song);
+
+//   return { message: 'Song created successfully', song: savedSong };
+// }
 
 async getAllGenres() {
   return this.songRepository
@@ -70,15 +112,7 @@ async getAllGenres() {
 // }
 
 
-public async updateSong(id: string, data: UpdateSongDto): Promise<{ message: string; song: Song }> {
-const updateResult = await this.songRepository.update(id, data);
-if (updateResult.affected === 0) {
-throw new NotFoundException(`Song with ID ${id} not found`);
-}
 
-const updatedSong = await this.songRepository.findOne({ where: { id } });
-return { message: 'Song updated successfully', song: updatedSong };
-}
 
 
 

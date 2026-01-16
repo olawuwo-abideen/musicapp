@@ -8,16 +8,18 @@ Param,
 Body,
 Query,
 Req,
-UseInterceptors
+UseInterceptors,
+UploadedFile
 } from '@nestjs/common';
 import { SongsService } from './songs.service';
-import { CreateSongDTO, UpdateSongDto } from './dto/song-dto';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { CreateSongDTO, CreateSongWithFileDTO, UpdateSongDto, UpdateSongWithFileDTO } from './dto/song-dto';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { IsValidUUIDPipe } from '../../shared/pipes/is-valid-uuid.pipe';
 import { CurrentUser } from '../../shared/decorators/current-user.decorator';
 import { User } from '../../shared/entities/user.entity';
 import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 import { PaginationDto } from '../../shared/dtos/pagination.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 
 @ApiBearerAuth()
@@ -26,13 +28,25 @@ import { PaginationDto } from '../../shared/dtos/pagination.dto';
 export class SongsController {
 constructor(private songsService: SongsService) {}
 
+
 @Post('')
+@ApiConsumes('multipart/form-data')
+@ApiBody({ type: CreateSongWithFileDTO })
+@UseInterceptors(FileInterceptor('file'))
 @ApiOperation({ summary: 'Create song' })
 public async createSong(
-@Body() data: CreateSongDTO,
+  @Body() data: CreateSongDTO,
+  @UploadedFile() file: Express.Multer.File,
 ) {
-return await this.songsService.createSong(data)
+  return this.songsService.createSong(data, file);
 }
+// @Post('')
+// @ApiOperation({ summary: 'Create song' })
+// public async createSong(
+// @Body() data: CreateSongDTO,
+// ) {
+// return await this.songsService.createSong(data)
+// }
 
 @UseInterceptors(CacheInterceptor)
 @CacheKey('__key')
@@ -78,17 +92,31 @@ async getGenres() {
   return this.songsService.getAllGenres();
 }
 
+
 @Put(':id')
+@ApiConsumes('multipart/form-data')
+@ApiBody({ type: UpdateSongWithFileDTO })
+@UseInterceptors(FileInterceptor('file'))
 @ApiOperation({ summary: 'Update a song' })
 public async updateSong(
-@Param('id', IsValidUUIDPipe) id: string,
-@Body() data: UpdateSongDto,
+  @Param('id', IsValidUUIDPipe) id: string,
+  @Body() data: UpdateSongDto,
+  @UploadedFile() file?: Express.Multer.File,
 ) {
-return  await this.songsService.updateSong(
-id,
-data,
-)
+  return this.songsService.updateSong(id, data, file);
 }
+
+// @Put(':id')
+// @ApiOperation({ summary: 'Update a song' })
+// public async updateSong(
+// @Param('id', IsValidUUIDPipe) id: string,
+// @Body() data: UpdateSongDto,
+// ) {
+// return  await this.songsService.updateSong(
+// id,
+// data,
+// )
+// }
 
 @UseInterceptors(CacheInterceptor)
 @CacheKey('__key')

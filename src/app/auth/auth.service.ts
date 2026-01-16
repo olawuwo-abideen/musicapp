@@ -41,20 +41,45 @@ private readonly subscriptionRepository: Repository<Subscription>,
 
 ) {}
 
-private async assignFreePlanIfNoneExists(userId: string) {
-const existing = await this.subscriptionRepository.findOne({ where: { userId } });
-if (existing) return;
 
-const freePlan = await this.planRepository.findOne({ where: { amount: 0 } });
-if (!freePlan) return;
+private async assignFreePlanIfNoneExists(
+  userId: string,
+  manager: EntityManager,
+) {
+  const existing = await manager.findOne(Subscription, {
+    where: { userId },
+  });
+  if (existing) return;
 
-await this.subscriptionRepository.save({
-userId,
-planId: freePlan.id,
-expiresAt: new Date('2099-12-31'),
-status: SubscriptionStatusEnum.ACTIVE,
-});
+  const freePlan = await manager.findOne(Plan, {
+    where: { amount: 0 },
+  });
+  if (!freePlan) return;
+
+  await manager.save(Subscription, {
+    userId,
+    planId: freePlan.id,
+    expiresAt: new Date('2099-12-31'),
+    status: SubscriptionStatusEnum.ACTIVE,
+  });
 }
+
+
+
+// private async assignFreePlanIfNoneExists(userId: string) {
+// const existing = await this.subscriptionRepository.findOne({ where: { userId } });
+// if (existing) return;
+
+// const freePlan = await this.planRepository.findOne({ where: { amount: 0 } });
+// if (!freePlan) return;
+
+// await this.subscriptionRepository.save({
+// userId,
+// planId: freePlan.id,
+// expiresAt: new Date('2099-12-31'),
+// status: SubscriptionStatusEnum.ACTIVE,
+// });
+// }
 
 
 
@@ -78,10 +103,11 @@ password,
 });
 
 user = await this.entityManager.transaction(async (manager) => {
-const savedUser = await manager.save(User, user);
-await this.assignFreePlanIfNoneExists(savedUser.id); 
-return savedUser;
+  const savedUser = await manager.save(User, user);
+  await this.assignFreePlanIfNoneExists(savedUser.id, manager);
+  return savedUser;
 });
+
 
 return {
 message: 'User signup successfully',
@@ -117,12 +143,13 @@ throw new UnauthorizedException('Invalid 2FA token');
 }
 }
 
-await this.assignFreePlanIfNoneExists(user.id);
-
+await this.assignFreePlanIfNoneExists(
+  user.id,
+  this.entityManager,
+);
 return {
 message: 'User logged in successfully',
 token: this.createAccessToken(user),
-user,
 };
 }
 

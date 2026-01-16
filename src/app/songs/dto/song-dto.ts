@@ -67,24 +67,6 @@ example: 'english',
 language: SongLanguage;
 
 
-@ApiProperty({
-required: true,
-description: 'The song url',
-example: 'songUrl ',
-})
-@IsString()
-@IsNotEmpty()
-songUrl: string;
-
-
-@ApiProperty({
-required: true,
-description: 'The song image url',
-example: 'songImageUrl'
-})
-@IsString()
-@IsNotEmpty()
-songImageUrl: string;
 
 @ApiProperty({
 required: true,
@@ -155,24 +137,8 @@ example: 'english',
 @IsNotEmpty()
 language: SongLanguage;
 
-@ApiProperty({
-required: true,
-description: 'The song url',
-example: 'songUrl ',
-})
-@IsString()
-@IsNotEmpty()
-songUrl: string;
 
 
-@ApiProperty({
-required: true,
-description: 'The song image url',
-example: 'songImageUrl'
-})
-@IsString()
-@IsNotEmpty()
-songImageUrl: string;
 
 
 @ApiProperty({
@@ -183,4 +149,27 @@ example: 'song lyrics'
 @IsString()
 @IsOptional()
 lyrics: string;
+}
+
+
+
+export class CreateSongWithFileDTO extends CreateSongDTO {
+  @ApiProperty({
+    type: 'string',
+    format: 'binary',
+    required: true,
+    description: 'The audio file to upload',
+  })
+  file: any;
+}
+
+
+export class UpdateSongWithFileDTO extends UpdateSongDto {
+  @ApiProperty({
+    type: 'string',
+    format: 'binary',
+    required: false,
+    description: 'The audio file to upload',
+  })
+  file?: any;
 }
